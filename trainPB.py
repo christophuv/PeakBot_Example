@@ -35,7 +35,7 @@ tf.get_logger().setLevel('WARNING')
 #
 
 import sys
-sys.path.append(os.path.join(".", "peakbot", "src"))
+sys.path.append(os.path.join("..", "peakbot", "src"))
 import peakbot.train.cuda
 import peakbot.Chromatogram
             
@@ -96,8 +96,8 @@ if __name__ == "__main__":
     blockdim = 256
     griddim  = 128
     examplesDir = ""
-    peakBotModelFile = "./PBmodel.model.h5"
-    logDir = "./logs"
+    peakBotModelFile = "./temp/PBmodel.model.h5"
+    logDir = "./temp/logs"
     
     if location == "HomePC":
         blockdim = (256, 1)
@@ -142,8 +142,8 @@ if __name__ == "__main__":
     
     tf.random.set_seed(2021)
     np.random.seed(2021)
-        
-    if False:
+    
+    if True:
         tic("Generated training and validation instances")
         
         for ds in dsProps.keys():
@@ -244,13 +244,13 @@ if __name__ == "__main__":
         print("")
         print("")
 
-    histAll.to_pickle(os.path.join(".", "history_all.pandas.pickle"))
+    histAll.to_pickle(os.path.join(".", "Data", "history_all.pandas.pickle"))
     tocP("train new PeakBot model","train new PeakBot model")
 
     df = pd.read_pickle(os.path.join(".", "history_all.pandas.pickle"))
     df['ID'] = df.model.str.split('_').str[-1]
     df = df[df["metric"]!="loss"]
-    df.to_csv("./summaryStats.tsv", sep="\t", index=False)
+    df.to_csv(os.path.join(".", "Data", "summaryStats.tsv"), sep="\t", index=False)
     print(df)
 
     plot = (p9.ggplot(df, p9.aes("ID", "value", color="metric", group="metric"))
@@ -259,7 +259,7 @@ if __name__ == "__main__":
             + p9.geom_line()
             + p9.ggtitle("Replicates of selected model"))
     p9.options.figure_size = (19,8)
-    p9.ggsave(plot=plot, filename="./summaryStats.png", height=7, width=12)
+    p9.ggsave(plot=plot, filename=os.path.join(".", "Data", "summaryStats.png"), height=7, width=12)
         
     runTimes.append("Traing a new PeakBot model took %.1f seconds"%toc("train new PeakBot model"))
     

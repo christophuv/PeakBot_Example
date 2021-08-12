@@ -35,7 +35,7 @@ tf.get_logger().setLevel('WARNING')
 #
 
 import sys
-sys.path.append(os.path.join(".", "peakbot", "src"))
+sys.path.append(os.path.join("..", "peakbot", "src"))
 import peakbot.train.cuda
 import peakbot.Chromatogram
             
@@ -96,8 +96,8 @@ if __name__ == "__main__":
     blockdim = 256
     griddim  = 128
     examplesDir = ""
-    peakBotModelFile = "./PBmodel.model.h5"
-    logDir = "./logs"
+    peakBotModelFile = "./temp/PBmodel.model.h5"
+    logDir = "./temp/logs"
     
     if location == "HomePC":
         blockdim = (256, 1)
@@ -142,8 +142,8 @@ if __name__ == "__main__":
     
     tf.random.set_seed(2021)
     np.random.seed(2021)
-        
-    if False:
+    
+    if True:
         tic("Generated training and validation instances")
         
         for ds in dsProps.keys():

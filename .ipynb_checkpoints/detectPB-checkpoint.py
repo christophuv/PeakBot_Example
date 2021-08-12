@@ -30,7 +30,7 @@ tf.config.experimental.set_memory_growth(tf.config.experimental.list_physical_de
 #
 
 import sys
-sys.path.append(os.path.join(".", "peakbot", "src"))
+sys.path.append(os.path.join("..", "peakbot", "src"))
 import peakbot
 import peakbot.Chromatogram
 import peakbot.cuda
@@ -83,15 +83,15 @@ if __name__ == "__main__":
                 }
     
     inFiles = {
-        "670_Sequence3_LVL1_1"  : {"file": "./Data/BOKU/670_Sequence3_LVL1_1.mzXML"  , "params": "WheatEar"},
-        "670_Sequence3_LVL1_2"  : {"file": "./Data/BOKU/670_Sequence3_LVL1_2.mzXML"  , "params": "WheatEar"},
-        "670_Sequence3_LVL1_3"  : {"file": "./Data/BOKU/670_Sequence3_LVL1_3.mzXML"  , "params": "WheatEar"},
-        "670_Sequence3_LVL1x2_1": {"file": "./Data/BOKU/670_Sequence3_LVL1x2_1.mzXML", "params": "WheatEar"},
-        "670_Sequence3_LVL1x2_2": {"file": "./Data/BOKU/670_Sequence3_LVL1x2_2.mzXML", "params": "WheatEar"},
-        "670_Sequence3_LVL1x2_3": {"file": "./Data/BOKU/670_Sequence3_LVL1x2_3.mzXML", "params": "WheatEar"},
-        "670_Sequence3_LVL1x4_1": {"file": "./Data/BOKU/670_Sequence3_LVL1x4_1.mzXML", "params": "WheatEar"},
-        "670_Sequence3_LVL1x4_2": {"file": "./Data/BOKU/670_Sequence3_LVL1x4_2.mzXML", "params": "WheatEar"},
-        "670_Sequence3_LVL1x4_3": {"file": "./Data/BOKU/670_Sequence3_LVL1x4_3.mzXML", "params": "WheatEar"},
+        "670_Sequence3_LVL1_1"  : {"file": "./Data/WheatEar/670_Sequence3_LVL1_1.mzXML"  , "params": "WheatEar"},
+        "670_Sequence3_LVL1_2"  : {"file": "./Data/WheatEar/670_Sequence3_LVL1_2.mzXML"  , "params": "WheatEar"},
+        "670_Sequence3_LVL1_3"  : {"file": "./Data/WheatEar/670_Sequence3_LVL1_3.mzXML"  , "params": "WheatEar"},
+        "670_Sequence3_LVL1x2_1": {"file": "./Data/WheatEar/670_Sequence3_LVL1x2_1.mzXML", "params": "WheatEar"},
+        "670_Sequence3_LVL1x2_2": {"file": "./Data/WheatEar/670_Sequence3_LVL1x2_2.mzXML", "params": "WheatEar"},
+        "670_Sequence3_LVL1x2_3": {"file": "./Data/WheatEar/670_Sequence3_LVL1x2_3.mzXML", "params": "WheatEar"},
+        "670_Sequence3_LVL1x4_1": {"file": "./Data/WheatEar/670_Sequence3_LVL1x4_1.mzXML", "params": "WheatEar"},
+        "670_Sequence3_LVL1x4_2": {"file": "./Data/WheatEar/670_Sequence3_LVL1x4_2.mzXML", "params": "WheatEar"},
+        "670_Sequence3_LVL1x4_3": {"file": "./Data/WheatEar/670_Sequence3_LVL1x4_3.mzXML", "params": "WheatEar"},
         
         "05_EB3388_AOH_p_0" : {"file": "./Data/PHM/05_EB3388_AOH_p_0.mzXML" , "params": "PHM"},
         "06_EB3389_AOH_p_10": {"file": "./Data/PHM/06_EB3389_AOH_p_10.mzXML", "params": "PHM"},
@@ -122,7 +122,7 @@ if __name__ == "__main__":
         griddim  = 256
         exportBatchSize= 2048
         
-    peakBotModelFile = "./PBmodel.model.h5"        
+    peakBotModelFile = "./temp/PBmodel.model.h5"        
     strategy = tf.distribute.OneDeviceStrategy(device="/gpu:0")
     
 

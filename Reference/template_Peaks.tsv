@@ -1,0 +1,8 @@
+RT	MZ	LeftRTBorder	RightRTBorder	MZDeviation
+## Tab separated values file
+## RT           : Mean retention time (peak apex) of the reference peak in seconds
+## MZ           : Mean mass-to-charge ratio of the reference peak
+## LeftRTBorder : Retention time of the start of the reference peak in seconds
+## RightRTBorder: Retention time of the end of the reference peak in seconds
+## MZDeviation  : Deviation of the reference peak in ppm (approximately 6 * standard deviation of the profile mode peak)
+1842.8	555.2830894179613	1835.76	1847.48	24.57705758582181

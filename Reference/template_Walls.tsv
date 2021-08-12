@@ -1,0 +1,7 @@
+MZ	Rtstart	Rtend	MZdeviation
+## Tab separated values file
+## MZ         : Average mass-to-charge ratio of the wall
+## Rtstart    : Start of the wall in seconds
+## Rtend      : End of the wall in seconds
+## MZdeviation: Deviation of the wall in ppm (approximately 6 * standard deviation of the profile mode peak)
+116.98628	900	2200	20
