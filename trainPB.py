@@ -178,8 +178,10 @@ if __name__ == "__main__":
 
     if True:
         histAll = None
-        os.remove(os.path.join(".", "Data", "history_all.pandas.pickle"))
-        tic("Generated training and validation instances")
+        try:
+            os.remove(os.path.join(".", "Data", "history_all.pandas.pickle"))
+        except Exception:
+            pass
         tic("Generated training and validation instances")
 
         for ds in dsProps.keys():
@@ -188,12 +190,11 @@ if __name__ == "__main__":
             except:
                 pass
             os.mkdir(os.path.join(examplesDir, ds))
-        print("removed old training instances in '%s'"%(examplesDir))
+            print("removed old training instances in '%s'"%(os.path.join(examplesDir, ds)))
 
-        ###############################################
-        ### Iterate files and polarities (if FPS is used)
-        ## (no changes are required here)
-        for ds in dsProps.keys():
+            ###############################################
+            ### Iterate files and polarities (if FPS is used)
+            ## (no changes are required here)
             print("Processing dataset '%s'"%ds)
             print("")
 
@@ -245,19 +246,19 @@ if __name__ == "__main__":
             print("\n\n\n\n\n")
 
 
-        ###############################################
-        ### data parameters for chromatograms
-        peakbot.train.shuffleResultsSampleNames(os.path.join(examplesDir, ds), verbose = True)
-        peakbot.train.shuffleResults(os.path.join(examplesDir, ds), steps = dsProps[ds]["shuffleSteps"], samplesToExchange = 50, verbose = True)
+            ###############################################
+            ### data parameters for chromatograms
+            peakbot.train.shuffleResultsSampleNames(os.path.join(examplesDir, ds), verbose = True)
+            peakbot.train.shuffleResults(os.path.join(examplesDir, ds), steps = dsProps[ds]["shuffleSteps"], samplesToExchange = 50, verbose = True)
 
-        tocP("Generated training and validation instances", label="Generated training and validation instances")
-        runTimes.append("Generating new training instances took %.1f seconds"%toc("Generated training and validation instances"))
-        print("\n\n\n\n\n")
-
-
+            tocP("Generated training and validation instances", label="Generated training and validation instances")
+            runTimes.append("Generating new training instances took %.1f seconds"%toc("Generated training and validation instances"))
+            print("\n\n\n\n\n")
 
 
 
+
+    if True:
         ###############################################
         ### Train new PeakBot Model
         ## (no changes are required here)
@@ -307,7 +308,7 @@ if __name__ == "__main__":
     p9.options.figure_size = (19,8)
     p9.ggsave(plot=plot, filename=os.path.join(".", "Data", "summaryStats.png"), height=7, width=12)
 
-    plot = (p9.ggplot(df, p9.aes("set", "value", colour="set")) 
+    plot = (p9.ggplot(df, p9.aes("set", "value", colour="set"))
             + p9.geom_point()
             + p9.facet_wrap("~metric", scales="free_y", ncol=2)
             + p9.ggtitle("Training losses/metrics") + p9.xlab("Training/Validation dataset") + p9.ylab("Value")
