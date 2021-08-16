@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-## run in python >=3.8
+## run in python >= 3.8
 
 
 # Imports
@@ -258,39 +258,39 @@ if __name__ == "__main__":
 
 
 
-    ###############################################
-    ### Train new PeakBot Model
-    ## (no changes are required here)
-    tic("train new PeakBot model")
-    pb = None
-    with strategy.scope():
-
-        addValDS = []
-        for ds in dsProps.keys():
-            addValDS.append({"folder": os.path.join(examplesDir, ds), "name": ds, "numBatches": 128})
-
-        pb, hist = peakbot.trainPeakBotModel(trainInstancesPath = os.path.join(examplesDir, "T"),
-                                             addValidationInstances = addValDS,
-                                             logBaseDir = logDir,
-                                             verbose = True)
-
-        pb.saveModelToFile(peakBotModelFile)
-        print("Newly trained peakbot saved to file '%s'"%(peakBotModelFile))
-
-
-        if histAll is None:
-            histAll = hist
-        else:
-            histAll = histAll.append(hist, ignore_index=True)
-
-        print("")
-        print("")
-
-        ### Summarize the training and validation metrices and losses
+        ###############################################
+        ### Train new PeakBot Model
         ## (no changes are required here)
-        histAll.to_pickle(os.path.join(".", "Data", "history_all.pandas.pickle"))
-        tocP("train new PeakBot model","train new PeakBot model")
-        runTimes.append("Traing a new PeakBot model took %.1f seconds"%toc("train new PeakBot model"))
+        tic("train new PeakBot model")
+        pb = None
+        with strategy.scope():
+
+            addValDS = []
+            for ds in dsProps.keys():
+                addValDS.append({"folder": os.path.join(examplesDir, ds), "name": ds, "numBatches": 128})
+
+            pb, hist = peakbot.trainPeakBotModel(trainInstancesPath = os.path.join(examplesDir, "T"),
+                                                 addValidationInstances = addValDS,
+                                                 logBaseDir = logDir,
+                                                 verbose = True)
+
+            pb.saveModelToFile(peakBotModelFile)
+            print("Newly trained peakbot saved to file '%s'"%(peakBotModelFile))
+
+
+            if histAll is None:
+                histAll = hist
+            else:
+                histAll = histAll.append(hist, ignore_index=True)
+
+            print("")
+            print("")
+
+            ### Summarize the training and validation metrices and losses
+            ## (no changes are required here)
+            histAll.to_pickle(os.path.join(".", "Data", "history_all.pandas.pickle"))
+            tocP("train new PeakBot model","train new PeakBot model")
+            runTimes.append("Traing a new PeakBot model took %.1f seconds"%toc("train new PeakBot model"))
 
 
     df = pd.read_pickle(os.path.join(".", "Data", "history_all.pandas.pickle"))
