@@ -90,18 +90,18 @@ if __name__ == "__main__":
     ## params: parameter collection for the particular sample (see variable expParams)
     inFiles = {
         "670_Sequence3_LVL1_1"  : {"file": "./Data/WheatEar/670_Sequence3_LVL1_1.mzXML" , "params": "WheatEar"},
-        "670_Sequence3_LVL1_2"  : {"file": "./Data/WheatEar/670_Sequence3_LVL1_2.mzXML" , "params": "WheatEar"},
+        #"670_Sequence3_LVL1_2"  : {"file": "./Data/WheatEar/670_Sequence3_LVL1_2.mzXML" , "params": "WheatEar"},
 
-        "670_Sequence3_LVL1x2_1": {"file": "./Data/WheatEar/670_Sequence3_LVL1x2_1.mzXML" , "params": "WheatEar"},
-        "670_Sequence3_LVL1x2_2": {"file": "./Data/WheatEar/670_Sequence3_LVL1x2_2.mzXML" , "params": "WheatEar"},
+        #"670_Sequence3_LVL1x2_1": {"file": "./Data/WheatEar/670_Sequence3_LVL1x2_1.mzXML" , "params": "WheatEar"},
+        #"670_Sequence3_LVL1x2_2": {"file": "./Data/WheatEar/670_Sequence3_LVL1x2_2.mzXML" , "params": "WheatEar"},
 
-        "670_Sequence3_LVL1x4_1": {"file": "./Data/WheatEar/670_Sequence3_LVL1x4_1.mzXML" , "params": "WheatEar"},
-        "670_Sequence3_LVL1x4_2": {"file": "./Data/WheatEar/670_Sequence3_LVL1x4_2.mzXML" , "params": "WheatEar"},
+        #"670_Sequence3_LVL1x4_1": {"file": "./Data/WheatEar/670_Sequence3_LVL1x4_1.mzXML" , "params": "WheatEar"},
+        #"670_Sequence3_LVL1x4_2": {"file": "./Data/WheatEar/670_Sequence3_LVL1x4_2.mzXML" , "params": "WheatEar"},
     }
     exFiles = {
         "670_Sequence3_LVL1_3"  : {"file": "./Data/WheatEar/670_Sequence3_LVL1_3.mzXML"   , "params": "WheatEar"},
-        "670_Sequence3_LVL1x2_3": {"file": "./Data/WheatEar/670_Sequence3_LVL1x2_3.mzXML" , "params": "WheatEar"},
-        "670_Sequence3_LVL1x4_3": {"file": "./Data/WheatEar/670_Sequence3_LVL1x4_3.mzXML" , "params": "WheatEar"},
+        #"670_Sequence3_LVL1x2_3": {"file": "./Data/WheatEar/670_Sequence3_LVL1x2_3.mzXML" , "params": "WheatEar"},
+        #"670_Sequence3_LVL1x4_3": {"file": "./Data/WheatEar/670_Sequence3_LVL1x4_3.mzXML" , "params": "WheatEar"},
     }
     extFiles = {
         "08_EB3391_AOH_p_60":  {"file": "./Data/PHM/08_EB3391_AOH_p_60.mzXML" , "params": "PHM"}
@@ -157,11 +157,11 @@ if __name__ == "__main__":
     headers, ebackgrounds = peakbot.readTSVFile("./Reference/PHM_backgrounds.tsv", convertToMinIfPossible = True)
     
     dsProps = {
-        "T"  : {"files": inFiles , "peaks": wepeaksTrain, "walls": wewalls, "backgrounds": webackgrounds, "n": math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*peakbot.Config.EPOCHS/len(inFiles)), "shuffleSteps": 1E5},
-        "V"  : {"files": inFiles , "peaks": wepeaksVal  , "walls": wewalls, "backgrounds": webackgrounds, "n": math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*128/len(inFiles))                  , "shuffleSteps": 1E4},
-        "iT" : {"files": exFiles , "peaks": wepeaksTrain, "walls": wewalls, "backgrounds": webackgrounds, "n": math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH+128/len(exFiles))                  , "shuffleSteps": 1E4},
-        "iV" : {"files": exFiles , "peaks": wepeaksVal  , "walls": wewalls, "backgrounds": webackgrounds, "n": math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH+128/len(exFiles))                  , "shuffleSteps": 1E4},
-        "eV" : {"files": extFiles, "peaks": epeaksVal   , "walls": ewalls , "backgrounds": ebackgrounds , "n": math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH+128/len(extFiles))                 , "shuffleSteps": 1E4}
+        "T"  : {"files": inFiles , "peaks": wepeaksTrain, "walls": wewalls, "backgrounds": webackgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*peakbot.Config.EPOCHS/len(inFiles))), "shuffleSteps": 1E5},
+        "V"  : {"files": inFiles , "peaks": wepeaksVal  , "walls": wewalls, "backgrounds": webackgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*128/len(inFiles)))                  , "shuffleSteps": 1E4},
+        "iT" : {"files": exFiles , "peaks": wepeaksTrain, "walls": wewalls, "backgrounds": webackgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH+128/len(exFiles)))                  , "shuffleSteps": 1E4},
+        "iV" : {"files": exFiles , "peaks": wepeaksVal  , "walls": wewalls, "backgrounds": webackgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH+128/len(exFiles)))                  , "shuffleSteps": 1E4},
+        "eV" : {"files": extFiles, "peaks": epeaksVal   , "walls": ewalls , "backgrounds": ebackgrounds , "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH+128/len(extFiles)))                 , "shuffleSteps": 1E4}
     }
                         
     
@@ -177,6 +177,9 @@ if __name__ == "__main__":
     tf.random.set_seed(2021)
     np.random.seed(2021)
     
+    
+    histAll = None
+    os.remove(os.path.join(".", "Data", "history_all.pandas.pickle"))
     tic("Generated training and validation instances")
 
     for ds in dsProps.keys():
@@ -250,15 +253,14 @@ if __name__ == "__main__":
     tocP("Generated training and validation instances", label="Generated training and validation instances")
     runTimes.append("Generating new training instances took %.1f seconds"%toc("Generated training and validation instances"))
     print("\n\n\n\n\n")
-                        
-    
-    
+
+
+
 
 
     ###############################################
     ### Train new PeakBot Model
     ## (no changes are required here)
-    histAll = None
     tic("train new PeakBot model")
     pb = None
     with strategy.scope():
@@ -275,23 +277,21 @@ if __name__ == "__main__":
         pb.saveModelToFile(peakBotModelFile)
         print("Newly trained peakbot saved to file '%s'"%(peakBotModelFile))
 
+
         if histAll is None:
             histAll = hist
         else:
-            hist = histAll.append(hist, ignore_index=True)
+            histAll = histAll.append(hist, ignore_index=True)
 
         print("")
         print("")
-                        
-    
-    
 
+        ### Summarize the training and validation metrices and losses
+        ## (no changes are required here)
+        histAll.to_pickle(os.path.join(".", "Data", "history_all.pandas.pickle"))
+        tocP("train new PeakBot model","train new PeakBot model")
+        runTimes.append("Traing a new PeakBot model took %.1f seconds"%toc("train new PeakBot model"))
 
-    ###############################################
-    ### Summarize the training and validation metrices and losses
-    ## (no changes are required here)
-    histAll.to_pickle(os.path.join(".", "Data", "history_all.pandas.pickle"))
-    tocP("train new PeakBot model","train new PeakBot model")
 
     df = pd.read_pickle(os.path.join(".", "Data", "history_all.pandas.pickle"))
     df['ID'] = df.model.str.split('_').str[-1]
@@ -306,9 +306,15 @@ if __name__ == "__main__":
             + p9.ggtitle("Replicates of selected model"))
     p9.options.figure_size = (19,8)
     p9.ggsave(plot=plot, filename=os.path.join(".", "Data", "summaryStats.png"), height=7, width=12)
-        
-    runTimes.append("Traing a new PeakBot model took %.1f seconds"%toc("train new PeakBot model"))
     
+    plot = (p9.ggplot(df, p9.aes("set", "value", colour="set")) 
+            + p9.geom_point()
+            + p9.facet_wrap("~metric", scales="free_y", ncol=2)
+            + p9.ggtitle("Training losses/metrics") + p9.xlab("Training/Validation dataset") + p9.ylab("Value")
+            + p9.theme(legend_position = "none", panel_spacing_x=0.5))
+    p9.options.figure_size = (5.2,5)
+    p9.ggsave(plot=plot, filename=os.path.join(".", "Data", "summary_Stats_overview.png"), width=5.2, height=5, dpi=300)
+
     
     ## Print runtimes
     for r in runTimes:
