@@ -19,7 +19,7 @@ os.environ["CUDA_VISIBLE_DEVICES"]="0"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 import tensorflow as tf
-from tensorflow.python.client import device_lib 
+from tensorflow.python.client import device_lib
 tf.config.experimental.set_memory_growth(tf.config.experimental.list_physical_devices('GPU')[0], True)
 tf.get_logger().setLevel('WARNING')
 
@@ -36,7 +36,7 @@ sys.path.append(os.path.join("..", "peakbot", "src"))
 
 ## Load the PeakBot package
 import peakbot.train.cuda
-import peakbot.Chromatogram            
+import peakbot.Chromatogram
 from peakbot.core import tic, toc, tocP, tocAddStat, addFunctionRuntime, timeit, printRunTimesSummary, TabLog
 
 
@@ -50,23 +50,23 @@ def loadFile(path):
         mzxml.parse_file(path)
         print("Imported chromatogram for '%s'"%(inFile))
     return mzxml
-    
+
 
 ###############################################
-### Process files 
+### Process files
 ##
 if __name__ == "__main__":
-    tic(label="overall")        
-    
+    tic(label="overall")
+
     ###############################################
     ### data parameters
-    ##  
+    ##
     ## Different LC-HRMS settings can be used per chromatogram. To be able to reuse them, they are summarized
     ##    in dictionaries. The keys are then used as the setting values
     ##
     ## polarities: specifies which filter lines are to be used for detecting the chromatographic peaks
     ## noiseLevel: Everything below this threshold is considered noise and removed directly after the import
-    ## minRT / maxRT: Area of the chromatogram in which chromatographic peaks are expected 
+    ## minRT / maxRT: Area of the chromatogram in which chromatographic peaks are expected
     ## RTpeakWidth: array of [minimum, maximum] peak-width in scans
     ## intraScanMaxAdjacentSignalDifferencePPM: Maximum difference of signals belonging to the same profile mode peak
     ## interScanMaxSimilarSignalDifferencePPM: Maximum difference of signals representing the same profile mode signal
@@ -75,7 +75,7 @@ if __name__ == "__main__":
                                "noiseLevel":1E3, "minRT":150, "maxRT":2250, "RTpeakWidth":[8,120],
                                "intraScanMaxAdjacentSignalDifferencePPM":15, "interScanMaxSimilarSignalDifferencePPM":3,
                                "minIntensity":1E5},
-              
+
                  "PHM": {"polarities": {"positive": "LTQ Orbitrap Velos (MS lvl: 1, pol: +)"},
                          "noiseLevel":1E3, "minRT":100, "maxRT":750, "RTpeakWidth":[4,120],
                          "intraScanMaxAdjacentSignalDifferencePPM":15, "interScanMaxSimilarSignalDifferencePPM":3,
@@ -86,7 +86,7 @@ if __name__ == "__main__":
     ##
     ## Different LC-HRMS chromatograms can be used for generating a training or validation dataset
     ##
-    ## file: Path of the mzXML file 
+    ## file: Path of the mzXML file
     ## params: parameter collection for the particular sample (see variable expParams)
     inFiles = {
         "670_Sequence3_LVL1_1"  : {"file": "./Data/WheatEar/670_Sequence3_LVL1_1.mzXML" , "params": "WheatEar"},
@@ -106,43 +106,42 @@ if __name__ == "__main__":
     extFiles = {
         "08_EB3391_AOH_p_60":  {"file": "./Data/PHM/08_EB3391_AOH_p_60.mzXML" , "params": "PHM"}
     }
-    
+
     ###############################################
     ## GPU information
-    ## 
+    ##
     ## These values specify how the GPU is used for generating the training examples
-    ## Please consult the documentation of your GPU. 
-    ## Values for an old Nvidia GTX 970 graphics card with 4GB GPU-memory are blockdim = 256, griddim = 128
-    ## These should thus work for most newer card. 
-    ## values blocdim = 256, griddim = 512 are optimized for the high-end GPU Nvidia Tesla V100S
-    ## The strategy specifies on which device tensorflow shall be executed. 
+    ## Please consult the documentation of your GPU.
+    ## Values for an old Nvidia GTX 970 graphics card with 4GB GPU-memory are blockdim = 256, griddim = 64
+    ## These should thus work for most newer card, however, for maximum performance these should be optimized to the GPU used
+    ## The strategy specifies on which device tensorflow shall be executed.
     blockdim = 256
-    griddim  = 512
+    griddim  = 128
     strategy = tf.distribute.OneDeviceStrategy(device="/gpu:0")
-    
+
     ###############################################
     ## Temporary directories
-    ## 
+    ##
     ## examplesDir should point to an existing empty directory with at least 50GB free space
-    examplesDir = "/home/users/cbueschl/_ScratchFromJuCUDA/burning_scratch/cbueschl/examples/CUDA"
+    examplesDir = "C:\\temp"#/home/users/cbueschl/_ScratchFromJuCUDA/burning_scratch/cbueschl/examples/CUDA"
     peakBotModelFile = "./temp/PBmodel.model.h5"
     logDir = "./temp/logs"
-    
+
     ###############################################
     ## Values for generating the training instances
     ##
-    ## maxPopulation: This specifies how many different references (features, backgrounds) shall be combined in a 
+    ## maxPopulation: This specifies how many different references (features, backgrounds) shall be combined in a
     ##   single training instance. The values specifies the maximum number and values between 1 and maxPopulation
     ##   will be picked randomly
     ## intensityScales: Specifies the factor with which the references will be scales (1/intensityScales to intensityScales)
     maxPopulation = 4
     intensityScales = 10
     randomnessFactor = 0.1
-    
+
     ###############################################
     ### Generate train instances
     ##
-    ## The different training sets are loaded from the files 
+    ## The different training sets are loaded from the files
     ## Different references an be loaded for different training and validation datastes
     ## Finally, all training and validation datasets are compiled into different sets in the variable dsProps
     ##    For each such dataset the chromatograms, reference peaks, backgrounds and walls must be specified as well
@@ -155,7 +154,7 @@ if __name__ == "__main__":
     headers, epeaksVal    = peakbot.readTSVFile("./Reference/PHM_valPeaks.tsv"   , convertToMinIfPossible = True)
     headers, ewalls       = peakbot.readTSVFile("./Reference/PHM_walls.tsv"      , convertToMinIfPossible = True)
     headers, ebackgrounds = peakbot.readTSVFile("./Reference/PHM_backgrounds.tsv", convertToMinIfPossible = True)
-    
+
     dsProps = {
         "T"  : {"files": inFiles , "peaks": wepeaksTrain, "walls": wewalls, "backgrounds": webackgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*peakbot.Config.EPOCHS/len(inFiles))), "shuffleSteps": 1E5},
         "V"  : {"files": inFiles , "peaks": wepeaksVal  , "walls": wewalls, "backgrounds": webackgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(inFiles)))                  , "shuffleSteps": 1E4},
@@ -163,96 +162,97 @@ if __name__ == "__main__":
         "iV" : {"files": exFiles , "peaks": wepeaksVal  , "walls": wewalls, "backgrounds": webackgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(exFiles)))                  , "shuffleSteps": 1E4},
         "eV" : {"files": extFiles, "peaks": epeaksVal   , "walls": ewalls , "backgrounds": ebackgrounds , "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(extFiles)))                 , "shuffleSteps": 1E4}
     }
-                        
-    
-    
+
+
+
 
 
     ###############################################
     ### Generate training instances from the previously specified training and validation datasets
-    ## (no changes are required here)    
+    ## (no changes are required here)
     runTimes = []
-    
+
     ## The random seeds are set
     tf.random.set_seed(2021)
     np.random.seed(2021)
-    
-    
-    histAll = None
-    os.remove(os.path.join(".", "Data", "history_all.pandas.pickle"))
-    tic("Generated training and validation instances")
 
-    for ds in dsProps.keys():
-        try:
-            shutil.rmtree(os.path.join(examplesDir, ds))
-        except:
-            pass
-        os.mkdir(os.path.join(examplesDir, ds))
-    print("removed old training instances in '%s'"%(examplesDir))
+    if True:
+        histAll = None
+        os.remove(os.path.join(".", "Data", "history_all.pandas.pickle"))
+        tic("Generated training and validation instances")
+        tic("Generated training and validation instances")
 
-    ###############################################
-    ### Iterate files and polarities (if FPS is used)
-    ## (no changes are required here)
-    for ds in dsProps.keys():
-        print("Processing dataset '%s'"%ds)
-        print("")
+        for ds in dsProps.keys():
+            try:
+                shutil.rmtree(os.path.join(examplesDir, ds))
+            except:
+                pass
+            os.mkdir(os.path.join(examplesDir, ds))
+        print("removed old training instances in '%s'"%(examplesDir))
 
-        for inFile, fileProps in dsProps[ds]["files"].items():
-            tic(label="sample")
+        ###############################################
+        ### Iterate files and polarities (if FPS is used)
+        ## (no changes are required here)
+        for ds in dsProps.keys():
+            print("Processing dataset '%s'"%ds)
+            print("")
 
-            params = expParams[fileProps["params"]]
+            for inFile, fileProps in dsProps[ds]["files"].items():
+                tic(label="sample")
 
-            ###############################################
-            ### data parameters for chromatograms
-            polarities = params["polarities"]
-            intraScanMaxAdjacentSignalDifferencePPM = params["intraScanMaxAdjacentSignalDifferencePPM"]
-            interScanMaxSimilarSignalDifferencePPM = params["interScanMaxSimilarSignalDifferencePPM"]
-            RTpeakWidth = params["RTpeakWidth"]
-            minIntensity = params["minIntensity"]
-
-            for polarity, filterLine in polarities.items():
-                print("Processing dataset '%s', sample '%s', polarity '%s'"%(ds, inFile, polarity))
-                print("")
+                params = expParams[fileProps["params"]]
 
                 ###############################################
-                ### Load chromatogram
-                tic()
-                mzxml = loadFile(fileProps["file"])
-                mzxml.keepOnlyFilterLine(filterLine)
-                print("Filtered mzXML file for %s scan events only"%(polarity))
-                print("  | .. took %.1f seconds"%(toc()))
-                print("")
+                ### data parameters for chromatograms
+                polarities = params["polarities"]
+                intraScanMaxAdjacentSignalDifferencePPM = params["intraScanMaxAdjacentSignalDifferencePPM"]
+                interScanMaxSimilarSignalDifferencePPM = params["interScanMaxSimilarSignalDifferencePPM"]
+                RTpeakWidth = params["RTpeakWidth"]
+                minIntensity = params["minIntensity"]
 
-                ###############################################
-                ### Generate train data
-                peakbot.train.cuda.generateTestInstances(
-                    mzxml, "'%s':'%s'"%(inFile, filterLine), 
-                    dsProps[ds]["peaks"], dsProps[ds]["walls"], dsProps[ds]["backgrounds"],
+                for polarity, filterLine in polarities.items():
+                    print("Processing dataset '%s', sample '%s', polarity '%s'"%(ds, inFile, polarity))
+                    print("")
 
-                    nTestExamples = dsProps[ds]["n"], exportPath = os.path.join(examplesDir, ds), 
+                    ###############################################
+                    ### Load chromatogram
+                    tic()
+                    mzxml = loadFile(fileProps["file"])
+                    mzxml.keepOnlyFilterLine(filterLine)
+                    print("Filtered mzXML file for %s scan events only"%(polarity))
+                    print("  | .. took %.1f seconds"%(toc()))
+                    print("")
 
-                    intraScanMaxAdjacentSignalDifferencePPM=intraScanMaxAdjacentSignalDifferencePPM, 
-                    interScanMaxSimilarSignalDifferencePPM=interScanMaxSimilarSignalDifferencePPM, 
-                    updateToLocalPeakProperties = True,
+                    ###############################################
+                    ### Generate train data
+                    peakbot.train.cuda.generateTestInstances(
+                        mzxml, "'%s':'%s'"%(inFile, filterLine),
+                        dsProps[ds]["peaks"], dsProps[ds]["walls"], dsProps[ds]["backgrounds"],
 
-                    RTpeakWidth = RTpeakWidth, minIntensity = minIntensity, 
+                        nTestExamples = dsProps[ds]["n"], exportPath = os.path.join(examplesDir, ds),
 
-                    maxPopulation = maxPopulation, intensityScales = intensityScales, randomnessFactor = randomnessFactor,
+                        intraScanMaxAdjacentSignalDifferencePPM=intraScanMaxAdjacentSignalDifferencePPM,
+                        interScanMaxSimilarSignalDifferencePPM=interScanMaxSimilarSignalDifferencePPM,
+                        updateToLocalPeakProperties = True,
 
-                    blockdim = blockdim, griddim = griddim,
-                    verbose = True)
+                        RTpeakWidth = RTpeakWidth, minIntensity = minIntensity,
 
+                        maxPopulation = maxPopulation, intensityScales = intensityScales, randomnessFactor = randomnessFactor,
+
+                        blockdim = blockdim, griddim = griddim,
+                        verbose = True)
+
+            print("\n\n\n\n\n")
+
+
+        ###############################################
+        ### data parameters for chromatograms
+        peakbot.train.shuffleResultsSampleNames(os.path.join(examplesDir, ds), verbose = True)
+        peakbot.train.shuffleResults(os.path.join(examplesDir, ds), steps = dsProps[ds]["shuffleSteps"], samplesToExchange = 50, verbose = True)
+
+        tocP("Generated training and validation instances", label="Generated training and validation instances")
+        runTimes.append("Generating new training instances took %.1f seconds"%toc("Generated training and validation instances"))
         print("\n\n\n\n\n")
-
-
-    ###############################################
-    ### data parameters for chromatograms
-    peakbot.train.shuffleResultsSampleNames(os.path.join(examplesDir, ds), verbose = True)
-    peakbot.train.shuffleResults(os.path.join(examplesDir, ds), steps = dsProps[ds]["shuffleSteps"], samplesToExchange = 50, verbose = True)
-
-    tocP("Generated training and validation instances", label="Generated training and validation instances")
-    runTimes.append("Generating new training instances took %.1f seconds"%toc("Generated training and validation instances"))
-    print("\n\n\n\n\n")
 
 
 
@@ -269,9 +269,9 @@ if __name__ == "__main__":
         for ds in dsProps.keys():
             addValDS.append({"folder": os.path.join(examplesDir, ds), "name": ds, "numBatches": 128})
 
-        pb, hist = peakbot.trainPeakBotModel(trainInstancesPath = os.path.join(examplesDir, "T"), 
+        pb, hist = peakbot.trainPeakBotModel(trainInstancesPath = os.path.join(examplesDir, "T"),
                                              addValidationInstances = addValDS,
-                                             logBaseDir = logDir, 
+                                             logBaseDir = logDir,
                                              verbose = True)
 
         pb.saveModelToFile(peakBotModelFile)
@@ -306,7 +306,7 @@ if __name__ == "__main__":
             + p9.ggtitle("Replicates of selected model"))
     p9.options.figure_size = (19,8)
     p9.ggsave(plot=plot, filename=os.path.join(".", "Data", "summaryStats.png"), height=7, width=12)
-    
+
     plot = (p9.ggplot(df, p9.aes("set", "value", colour="set")) 
             + p9.geom_point()
             + p9.facet_wrap("~metric", scales="free_y", ncol=2)
@@ -315,7 +315,7 @@ if __name__ == "__main__":
     p9.options.figure_size = (5.2,5)
     p9.ggsave(plot=plot, filename=os.path.join(".", "Data", "summary_Stats_overview.png"), width=5.2, height=5, dpi=300)
 
-    
+
     ## Print runtimes
     for r in runTimes:
         print(r)
