@@ -69,17 +69,17 @@ if __name__ == "__main__":
     expParams = {"WheatEar" : {"polarities": {"positive": "Q Exactive (MS lvl: 1, pol: +)"},
                                "noiseLevel":1E3, "minRT":150, "maxRT":2250, "RTpeakWidth":[8,120], "SavitzkyGolayWindowPlusMinus": 3,
                                "intraScanMaxAdjacentSignalDifferencePPM":15, "interScanMaxSimilarSignalDifferencePPM":3,
-                               "minApexBorderRatio":4, "minIntensity":1E5},
+                               "minIntensity":1E5},
               
                  "PHM": {"polarities": {"positive": "LTQ Orbitrap Velos (MS lvl: 1, pol: +)"},
                          "noiseLevel":1E3, "minRT":100, "maxRT":750, "RTpeakWidth":[4,120], "SavitzkyGolayWindowPlusMinus": 3,
                          "intraScanMaxAdjacentSignalDifferencePPM":15, "interScanMaxSimilarSignalDifferencePPM":3,
-                         "minApexBorderRatio":4, "minIntensity":1E5},
+                         "minIntensity":1E5},
                  
                  "HT29": {"polarities": {"positive": "Q Exactive HF (MS lvl: 1, pol: +)"},
                           "noiseLevel":1E3, "minRT":30, "maxRT":680, "RTpeakWidth":[2,30], "SavitzkyGolayWindowPlusMinus": 2,
                           "intraScanMaxAdjacentSignalDifferencePPM":15, "interScanMaxSimilarSignalDifferencePPM":3,
-                          "minApexBorderRatio":4, "minIntensity":1E5},
+                          "minIntensity":1E5},
                 }
     
     inFiles = {
@@ -151,7 +151,6 @@ if __name__ == "__main__":
         interScanMaxSimilarSignalDifferencePPM = params["interScanMaxSimilarSignalDifferencePPM"]
         RTpeakWidth = params["RTpeakWidth"]
         SavitzkyGolayWindowPlusMinus = params["SavitzkyGolayWindowPlusMinus"]
-        minApexBorderRatio = params["minApexBorderRatio"]
         minIntensity = params["minIntensity"]
         
         for polarity, filterLine in polarities.items():
@@ -185,7 +184,6 @@ if __name__ == "__main__":
                         interScanMaxSimilarSignalDifferencePPM = interScanMaxSimilarSignalDifferencePPM,
                         RTpeakWidth = RTpeakWidth,
                         SavitzkyGolayWindowPlusMinus = SavitzkyGolayWindowPlusMinus, 
-                        minApexBorderRatio = minApexBorderRatio,
                         minIntensity = minIntensity,
                         exportPath = tmpdirname, 
                         exportLocalMaxima = "peak-like-shape", # "all", "localMaxima-with-mzProfile", "peak-like-shape"
