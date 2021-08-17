@@ -45,10 +45,16 @@ from peakbot.core import tic, toc, tocP, tocAddStat, addFunctionRuntime, timeit,
 def loadFile(path):
     tic()
     mzxml = None
-    if os.path.exists(path):
+    if os.path.exists(path+".pickle"):
+        with open(path+".pickle", "rb") as inF:
+            mzxml = pickle.load(inF)
+        print("Imported chromatogram.pickle for '%s'"%(path))
+    else:
         mzxml = peakbot.Chromatogram.Chromatogram()
         mzxml.parse_file(path)
-        print("Imported chromatogram for '%s'"%(inFile))
+        with open(path+".pickle", "wb") as outF:
+            pickle.dump(mzxml, outF)
+        print("Imported chromatogram for '%s'"%(path))
     return mzxml
 
 
@@ -116,13 +122,15 @@ if __name__ == "__main__":
     ## These should thus work for most newer card, however, for maximum performance these should be optimized to the GPU used
     ## The strategy specifies on which device tensorflow shall be executed.
     blockdim = 256
-    griddim  = 128
+    griddim  = 512
     strategy = tf.distribute.OneDeviceStrategy(device="/gpu:0")
 
     ###############################################
     ## Temporary directories
     ##
     ## examplesDir should point to an existing empty directory with at least 50GB free space
+    ## peakBotModelFile is the file to which the PeakBot CNN model will be saved in order to load it for the detection of other chromatographic peaks
+    ## logDir is the directory to which logging information is written
     examplesDir = "/home/users/cbueschl/_ScratchFromJuCUDA/burning_scratch/cbueschl/examples/CUDA"
     peakBotModelFile = "./temp/PBmodel.model.h5"
     logDir = "./temp/logs"
@@ -134,6 +142,7 @@ if __name__ == "__main__":
     ##   single training instance. The values specifies the maximum number and values between 1 and maxPopulation
     ##   will be picked randomly
     ## intensityScales: Specifies the factor with which the references will be scales (1/intensityScales to intensityScales)
+    ## randomnessFactor: Specifies the factor which which the individual signals of the raw data are multiplied
     maxPopulation = 4
     intensityScales = 10
     randomnessFactor = 0.1
@@ -246,7 +255,7 @@ if __name__ == "__main__":
         peakbot.train.shuffleResults(os.path.join(examplesDir, ds), steps = dsProps[ds]["shuffleSteps"], samplesToExchange = 50, verbose = True)
 
         tocP("Generated training and validation instances", label="Generated training and validation instances")
-        runTimes.append("Generating new training instances took %.1f seconds"%toc("Generated training and validation instances"))
+        runTimes.append("Generating new training/validation instances for the dataset '%s' took %.1f seconds"%(ds, toc("Generated training and validation instances")))
         print("\n\n\n\n\n")
 
     

@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-## run in python >=3.9
+## run in python >= 3.8
 ## activate conda environment on jucuda
-## conda activate python3.9
-
-location = "JuCuda"  ## JuCuda, HomePC
+## conda activate python3.8
 
 # Imports
 import os
@@ -45,13 +43,13 @@ def loadFile(path):
     if os.path.exists(path+".pickle"):
         with open(path+".pickle", "rb") as inF:
             mzxml = pickle.load(inF)
-        print("Imported chromatogram.pickle for '%s'"%(inFile))
+        print("Imported chromatogram.pickle for '%s'"%(path))
     else:
         mzxml = peakbot.Chromatogram.Chromatogram()
         mzxml.parse_file(path)
         with open(path+".pickle", "wb") as outF:
             pickle.dump(mzxml, outF)
-        print("Imported chromatogram for '%s'"%(inFile))
+        print("Imported chromatogram for '%s'"%(path))
     return mzxml
 
 
@@ -65,7 +63,19 @@ if __name__ == "__main__":
     tic(label="overall")
 
     ###############################################
-    ### chromatograms to process
+    ### data parameters
+    ##
+    ## Different LC-HRMS settings can be used per chromatogram. To be able to reuse them, they are summarized
+    ##    in dictionaries. The keys are then used as the setting values
+    ##
+    ## polarities: specifies which filter lines are to be used for detecting the chromatographic peaks
+    ## noiseLevel: Everything below this threshold is considered noise and removed directly after the import
+    ## minRT / maxRT: Area of the chromatogram in which chromatographic peaks are expected
+    ## RTpeakWidth: array of [minimum, maximum] peak-width in scans
+    ## SavitzkyGolayWindowPlusMinus: specifies the degree of smoothing. A value of x results in a smoothing window of 2*x + 1
+    ## intraScanMaxAdjacentSignalDifferencePPM: Maximum difference of signals belonging to the same profile mode peak
+    ## interScanMaxSimilarSignalDifferencePPM: Maximum difference of signals representing the same profile mode signal
+    ## minIntensity: All signals below this threshold are not considered for the local maximum detection
     expParams = {"WheatEar" : {"polarities": {"positive": "Q Exactive (MS lvl: 1, pol: +)"},
                                "noiseLevel":1E3, "minRT":150, "maxRT":2250, "RTpeakWidth":[8,120], "SavitzkyGolayWindowPlusMinus": 3,
                                "intraScanMaxAdjacentSignalDifferencePPM":15, "interScanMaxSimilarSignalDifferencePPM":3,
@@ -81,7 +91,14 @@ if __name__ == "__main__":
                           "intraScanMaxAdjacentSignalDifferencePPM":15, "interScanMaxSimilarSignalDifferencePPM":3,
                           "minIntensity":1E5},
                 }
-    
+
+    ###############################################
+    ### chromatograms to process
+    ##
+    ## Different LC-HRMS chromatograms can be used for generating a training or validation dataset
+    ##
+    ## file: Path of the mzXML file
+    ## params: parameter collection for the particular sample (see variable expParams)
     inFiles = {
         "670_Sequence3_LVL1_1"  : {"file": "./Data/WheatEar/670_Sequence3_LVL1_1.mzXML"  , "params": "WheatEar"},
         "670_Sequence3_LVL1_2"  : {"file": "./Data/WheatEar/670_Sequence3_LVL1_2.mzXML"  , "params": "WheatEar"},
@@ -111,19 +128,20 @@ if __name__ == "__main__":
     }
 
     ###############################################
-    ### general parameters
-        
-    blockdim = 256
-    griddim  = 128
-    exportBatchSize = 512
-    
-    if location == "JuCuda":
-        blockdim = 512
-        griddim  = 256
-        exportBatchSize= 2048
-        
-    peakBotModelFile = "./temp/PBmodel.model.h5"        
+    ## GPU information
+    ##
+    ## These values specify how the GPU is used for generating the training examples
+    ## Please consult the documentation of your GPU.
+    ## Values for an old Nvidia GTX 970 graphics card with 4GB GPU-memory are blockdim = 256, griddim = 64
+    ## These should thus work for most newer card, however, for maximum performance these should be optimized to the GPU used
+    ## The strategy specifies on which device tensorflow shall be executed.
+    ## exportBatchSize: specifies how many putative areas shall be exported in one batch
+    ## peakBotModelFile: specifies which model to load from the file system
+    blockdim = 512
+    griddim  = 256
     strategy = tf.distribute.OneDeviceStrategy(device="/gpu:0")
+    exportBatchSize = 2048
+    peakBotModelFile = "./temp/PBmodel.model.h5"        
     
 
 
