@@ -50,7 +50,7 @@ PeakBot in general has no difficult data processing parameters. However, the use
 The two parameters intraScanMaxAdjacentSignalDifferencePPM and interScanMaxSimilarSignalDifferencePPM are a bit difficult to evaluate, but can in general be used with the same values. It can be done with any software that visualized LC-HRMS chromatograms. In this respect TOPPView from the OpenMS toolbox (https://pubmed.ncbi.nlm.nih.gov/19425593/) can be used as it allows the user to easily calculate the m/z difference in ppm when selecting two signals and pressing the shift key. Alternatively, PeakBot offers a function to estimate these values automatically (see script estimateParameters.py). 
 
 The following figure illustrates the different reference feature values and LC-HRMS settings. 
-![illustration of PeakBot settings](https://github.com/christophuv/PeakBot_Example/Parameters.png)
+![illustration of PeakBot settings](https://github.com/christophuv/PeakBot_Example/raw/main/Parameters.png)
 
 
 
