@@ -32,7 +32,6 @@ sys.path.append(os.path.join("..", "peakbot", "src"))
 import peakbot
 import peakbot.Chromatogram
 import peakbot.cuda
-import peakbot.numpy
             
 from peakbot.core import tic, toc, tocP, tocAddStat, addFunctionRuntime, timeit, printRunTimesSummary, TabLog
 
