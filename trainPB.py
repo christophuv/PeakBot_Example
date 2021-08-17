@@ -123,7 +123,7 @@ if __name__ == "__main__":
     ## Temporary directories
     ##
     ## examplesDir should point to an existing empty directory with at least 50GB free space
-    examplesDir = "C:\\temp"#/home/users/cbueschl/_ScratchFromJuCUDA/burning_scratch/cbueschl/examples/CUDA"
+    examplesDir = "/home/users/cbueschl/_ScratchFromJuCUDA/burning_scratch/cbueschl/examples/CUDA"
     peakBotModelFile = "./temp/PBmodel.model.h5"
     logDir = "./temp/logs"
 
@@ -157,10 +157,10 @@ if __name__ == "__main__":
 
     dsProps = {
         "T"  : {"files": inFiles , "peaks": wepeaksTrain, "walls": wewalls, "backgrounds": webackgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*peakbot.Config.EPOCHS/len(inFiles))), "shuffleSteps": 1E5},
-        "V"  : {"files": inFiles , "peaks": wepeaksVal  , "walls": wewalls, "backgrounds": webackgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(inFiles)))                  , "shuffleSteps": 1E4},
-        "iT" : {"files": exFiles , "peaks": wepeaksTrain, "walls": wewalls, "backgrounds": webackgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(exFiles)))                  , "shuffleSteps": 1E4},
-        "iV" : {"files": exFiles , "peaks": wepeaksVal  , "walls": wewalls, "backgrounds": webackgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(exFiles)))                  , "shuffleSteps": 1E4},
-        "eV" : {"files": extFiles, "peaks": epeaksVal   , "walls": ewalls , "backgrounds": ebackgrounds , "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(extFiles)))                 , "shuffleSteps": 1E4}
+        "V"  : {"files": inFiles , "peaks": wepeaksVal  , "walls": wewalls, "backgrounds": webackgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(inFiles)))                    , "shuffleSteps": 1E4},
+        "iT" : {"files": exFiles , "peaks": wepeaksTrain, "walls": wewalls, "backgrounds": webackgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(exFiles)))                    , "shuffleSteps": 1E4},
+        "iV" : {"files": exFiles , "peaks": wepeaksVal  , "walls": wewalls, "backgrounds": webackgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(exFiles)))                    , "shuffleSteps": 1E4},
+        "eV" : {"files": extFiles, "peaks": epeaksVal   , "walls": ewalls , "backgrounds": ebackgrounds , "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(extFiles)))                   , "shuffleSteps": 1E4}
     }
 
 
@@ -175,146 +175,134 @@ if __name__ == "__main__":
     ## The random seeds are set
     tf.random.set_seed(2021)
     np.random.seed(2021)
-
-    if True:
-        histAll = None
+    
+    histAll = None
+    try:
+        os.remove(os.path.join(".", "Data", "history_all.pandas.pickle"))
+    except Exception:
+        pass
+    
+    tic("Generated training and validation instances")
+    for ds in dsProps.keys():
+        print("Processing dataset '%s'"%ds)
+        print("")
+        
         try:
-            os.remove(os.path.join(".", "Data", "history_all.pandas.pickle"))
-        except Exception:
+            shutil.rmtree(os.path.join(examplesDir, ds))
+        except:
             pass
-        tic("Generated training and validation instances")
+        os.mkdir(os.path.join(examplesDir, ds))
+        print("removed old training instances in '%s'"%(os.path.join(examplesDir, ds)))
 
-        for ds in dsProps.keys():
-            try:
-                shutil.rmtree(os.path.join(examplesDir, ds))
-            except:
-                pass
-            os.mkdir(os.path.join(examplesDir, ds))
-            print("removed old training instances in '%s'"%(os.path.join(examplesDir, ds)))
+        ###############################################
+        ### Iterate files and polarities (if FPS is used)
+        ## (no changes are required here)
+        for inFile, fileProps in dsProps[ds]["files"].items():
+            tic(label="sample")
 
             ###############################################
-            ### Iterate files and polarities (if FPS is used)
-            ## (no changes are required here)
-            print("Processing dataset '%s'"%ds)
-            print("")
+            ### Data parameters for chromatograms
+            params = expParams[fileProps["params"]]
+            polarities = params["polarities"]
+            intraScanMaxAdjacentSignalDifferencePPM = params["intraScanMaxAdjacentSignalDifferencePPM"]
+            interScanMaxSimilarSignalDifferencePPM = params["interScanMaxSimilarSignalDifferencePPM"]
+            RTpeakWidth = params["RTpeakWidth"]
+            minIntensity = params["minIntensity"]
 
-            for inFile, fileProps in dsProps[ds]["files"].items():
-                tic(label="sample")
-
-                params = expParams[fileProps["params"]]
+            for polarity, filterLine in polarities.items():
+                print("Processing chromatogram '%s', sample '%s', polarity '%s'"%(ds, inFile, polarity))
+                print("")
 
                 ###############################################
-                ### data parameters for chromatograms
-                polarities = params["polarities"]
-                intraScanMaxAdjacentSignalDifferencePPM = params["intraScanMaxAdjacentSignalDifferencePPM"]
-                interScanMaxSimilarSignalDifferencePPM = params["interScanMaxSimilarSignalDifferencePPM"]
-                RTpeakWidth = params["RTpeakWidth"]
-                minIntensity = params["minIntensity"]
+                ### Load chromatogram
+                tic()
+                mzxml = loadFile(fileProps["file"])
+                mzxml.keepOnlyFilterLine(filterLine)
+                print("Filtered chromatogram file for %s scan events only"%(polarity))
+                print("")
 
-                for polarity, filterLine in polarities.items():
-                    print("Processing dataset '%s', sample '%s', polarity '%s'"%(ds, inFile, polarity))
-                    print("")
+                ###############################################
+                ### Generate train data
+                peakbot.train.cuda.generateTestInstances(
+                    mzxml, "'%s':'%s'"%(inFile, filterLine),
+                    dsProps[ds]["peaks"], dsProps[ds]["walls"], dsProps[ds]["backgrounds"],
 
-                    ###############################################
-                    ### Load chromatogram
-                    tic()
-                    mzxml = loadFile(fileProps["file"])
-                    mzxml.keepOnlyFilterLine(filterLine)
-                    print("Filtered mzXML file for %s scan events only"%(polarity))
-                    print("  | .. took %.1f seconds"%(toc()))
-                    print("")
+                    nTestExamples = dsProps[ds]["n"], exportPath = os.path.join(examplesDir, ds),
 
-                    ###############################################
-                    ### Generate train data
-                    peakbot.train.cuda.generateTestInstances(
-                        mzxml, "'%s':'%s'"%(inFile, filterLine),
-                        dsProps[ds]["peaks"], dsProps[ds]["walls"], dsProps[ds]["backgrounds"],
+                    intraScanMaxAdjacentSignalDifferencePPM=intraScanMaxAdjacentSignalDifferencePPM,
+                    interScanMaxSimilarSignalDifferencePPM=interScanMaxSimilarSignalDifferencePPM,
+                    updateToLocalPeakProperties = True,
 
-                        nTestExamples = dsProps[ds]["n"], exportPath = os.path.join(examplesDir, ds),
+                    RTpeakWidth = RTpeakWidth, minIntensity = minIntensity,
 
-                        intraScanMaxAdjacentSignalDifferencePPM=intraScanMaxAdjacentSignalDifferencePPM,
-                        interScanMaxSimilarSignalDifferencePPM=interScanMaxSimilarSignalDifferencePPM,
-                        updateToLocalPeakProperties = True,
+                    maxPopulation = maxPopulation, intensityScales = intensityScales, randomnessFactor = randomnessFactor,
 
-                        RTpeakWidth = RTpeakWidth, minIntensity = minIntensity,
+                    blockdim = blockdim, griddim = griddim,
+                    verbose = True)
 
-                        maxPopulation = maxPopulation, intensityScales = intensityScales, randomnessFactor = randomnessFactor,
-
-                        blockdim = blockdim, griddim = griddim,
-                        verbose = True)
-
-            print("\n\n\n\n\n")
-
-
-            ###############################################
-            ### data parameters for chromatograms
-            peakbot.train.shuffleResultsSampleNames(os.path.join(examplesDir, ds), verbose = True)
-            peakbot.train.shuffleResults(os.path.join(examplesDir, ds), steps = dsProps[ds]["shuffleSteps"], samplesToExchange = 50, verbose = True)
-
-            tocP("Generated training and validation instances", label="Generated training and validation instances")
-            runTimes.append("Generating new training instances took %.1f seconds"%toc("Generated training and validation instances"))
-            print("\n\n\n\n\n")
-
-
-
-
-    if True:
         ###############################################
-        ### Train new PeakBot Model
+        ### Shuffle generated training/validation dataset from the different chromatograms
+        peakbot.train.shuffleResultsSampleNames(os.path.join(examplesDir, ds), verbose = True)
+        peakbot.train.shuffleResults(os.path.join(examplesDir, ds), steps = dsProps[ds]["shuffleSteps"], samplesToExchange = 50, verbose = True)
+
+        tocP("Generated training and validation instances", label="Generated training and validation instances")
+        runTimes.append("Generating new training instances took %.1f seconds"%toc("Generated training and validation instances"))
+        print("\n\n\n\n\n")
+
+    
+
+    ###############################################
+    ### Train new PeakBot Model
+    ## (no changes are required here)
+    tic("train new PeakBot model")
+    pb = None
+    with strategy.scope():
+
+        addValDS = []
+        for ds in dsProps.keys():
+            addValDS.append({"folder": os.path.join(examplesDir, ds), "name": ds, "numBatches": 128})
+
+        pb, hist = peakbot.trainPeakBotModel(trainInstancesPath = os.path.join(examplesDir, "T"),
+                                             addValidationInstances = addValDS,
+                                             logBaseDir = logDir,
+                                             verbose = True)
+
+        pb.saveModelToFile(peakBotModelFile)
+        print("Newly trained peakbot saved to file '%s'"%(peakBotModelFile))
+
+
+        if histAll is None:
+            histAll = hist
+        else:
+            histAll = histAll.append(hist, ignore_index=True)
+
+        print("")
+        print("")
+
+        ### Summarize the training and validation metrices and losses
         ## (no changes are required here)
-        tic("train new PeakBot model")
-        pb = None
-        with strategy.scope():
+        histAll.to_pickle(os.path.join(".", "Data", "history_all.pandas.pickle"))
+        tocP("train new PeakBot model","train new PeakBot model")
+        runTimes.append("Traing a new PeakBot model took %.1f seconds"%toc("train new PeakBot model"))
 
-            addValDS = []
-            for ds in dsProps.keys():
-                addValDS.append({"folder": os.path.join(examplesDir, ds), "name": ds, "numBatches": 128})
-
-            pb, hist = peakbot.trainPeakBotModel(trainInstancesPath = os.path.join(examplesDir, "T"),
-                                                 addValidationInstances = addValDS,
-                                                 logBaseDir = logDir,
-                                                 verbose = True)
-
-            pb.saveModelToFile(peakBotModelFile)
-            print("Newly trained peakbot saved to file '%s'"%(peakBotModelFile))
-
-
-            if histAll is None:
-                histAll = hist
-            else:
-                histAll = histAll.append(hist, ignore_index=True)
-
-            print("")
-            print("")
-
-            ### Summarize the training and validation metrices and losses
-            ## (no changes are required here)
-            histAll.to_pickle(os.path.join(".", "Data", "history_all.pandas.pickle"))
-            tocP("train new PeakBot model","train new PeakBot model")
-            runTimes.append("Traing a new PeakBot model took %.1f seconds"%toc("train new PeakBot model"))
-
-
+        
+        
+    ###############################################
+    ### Summarize and illustrate the results of the different training and validation dataset
+    ## (no changes are required here)
     df = pd.read_pickle(os.path.join(".", "Data", "history_all.pandas.pickle"))
     df['ID'] = df.model.str.split('_').str[-1]
     df = df[df["metric"]!="loss"]
-    df.to_csv(os.path.join(".", "Data", "summaryStats.tsv"), sep="\t", index=False)
-    print(df)
-
-    plot = (p9.ggplot(df, p9.aes("ID", "value", color="metric", group="metric"))
-            + p9.facet_grid(".~set", scales="free_y")
-            + p9.geom_point()
-            + p9.geom_line()
-            + p9.ggtitle("Replicates of selected model"))
-    p9.options.figure_size = (19,8)
-    p9.ggsave(plot=plot, filename=os.path.join(".", "Data", "summaryStats.png"), height=7, width=12)
+    df.to_csv(os.path.join(".", "Data", "Summary_LossMetrics.tsv"), sep="\t", index=False)
 
     plot = (p9.ggplot(df, p9.aes("set", "value", colour="set"))
             + p9.geom_point()
             + p9.facet_wrap("~metric", scales="free_y", ncol=2)
+            + p9.scale_x_discrete(limits=["T", "V", "iT", "iV", "eV"])
             + p9.ggtitle("Training losses/metrics") + p9.xlab("Training/Validation dataset") + p9.ylab("Value")
             + p9.theme(legend_position = "none", panel_spacing_x=0.5))
     p9.options.figure_size = (5.2,5)
-    p9.ggsave(plot=plot, filename=os.path.join(".", "Data", "summary_Stats_overview.png"), width=5.2, height=5, dpi=300)
+    p9.ggsave(plot=plot, filename=os.path.join(".", "Data", "Summary_LossesMetrics.png"), width=5.2, height=5, dpi=300)
 
 
     ## Print runtimes
