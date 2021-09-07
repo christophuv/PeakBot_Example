@@ -121,8 +121,8 @@ if __name__ == "__main__":
     ## Values for an old Nvidia GTX 970 graphics card with 4GB GPU-memory are blockdim = 256, griddim = 64
     ## These should thus work for most newer card, however, for maximum performance these should be optimized to the GPU used
     ## The strategy specifies on which device tensorflow shall be executed.
-    blockdim = 256
-    griddim  = 512
+    blockdim = 384
+    griddim  = 128
     strategy = tf.distribute.OneDeviceStrategy(device="/gpu:0")
 
     ###############################################
@@ -269,7 +269,7 @@ if __name__ == "__main__":
 
         addValDS = []
         for ds in dsProps.keys():
-            addValDS.append({"folder": os.path.join(examplesDir, ds), "name": ds, "numBatches": 128})
+            addValDS.append({"folder": os.path.join(examplesDir, ds), "name": ds, "numBatches": 512})
 
         pb, hist = peakbot.trainPeakBotModel(trainInstancesPath = os.path.join(examplesDir, "T"),
                                              addValidationInstances = addValDS,

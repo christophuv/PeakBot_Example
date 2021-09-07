@@ -67,3 +67,10 @@ This script shows how to detect chromatographic peaks in a new chromatogram with
 The main functions to detect chromatographic peaks in a LC-HRMS chromatogram with a PeakBot model are `peakbot.cuda.preProcessChromatogram` for extracting the standardized areas from the chromatogram and `peakbot.runPeakBot` for testing the standardized area for chromatographic peaks or backgrounds. 
 
 More information about how to specify the files and the LC-HRMS properties is directly documented in the script. 
+
+## group.py
+This script shows how detected chromatographic peaks can be grouped into a data matrix and a featureML file. 
+
+The main functions to group detected features from several samples are `peakbot.cuda.KNNalignFeatures` for aligning the detected features using a k-nearest-neighbor approach and `peakbot.cuda.groupFeatures` for calculating the groups. 
+
+More information about how to specify the files and the LC-HRMS properties is directly documented in the script. 
