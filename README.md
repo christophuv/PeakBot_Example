@@ -5,9 +5,9 @@ This script shows how to use the PeakBot framework. In general, first a PeakBot 
 For training, different reference features must be specified. A comparison has shown that at least 100 different reference features should be provided. However, this can also be different isotopologs of the same feature. Nevertheless care should be taken to select and specify the many different chromatographic peak forms present in the data. 
 
 The format to specify the list of reference features is a simple tab-separated values (tsv) file with the following columns:
-RT | MZ | LeftRTBorder | RightRTBorder | MZDeviation
---- | --- | --- | --- | ---
-1842 | 555.283089 | 1835 | 1847 | 24.5
+| RT | MZ | LeftRTBorder | RightRTBorder | MZDeviation |
+| --- | --- | --- | --- | --- |
+| 1842 | 555.283089 | 1835 | 1847 | 24.5 |
 
 The column RT specifies the approximate retention time (peak apex) of the reference feature in seconds. 
 The column MZ specifies the approximate mass-to-charge (m/z) ratio of the reference feature. 
