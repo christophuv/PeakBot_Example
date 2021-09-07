@@ -16,9 +16,9 @@ The column RightRTBorder specifies the approximate retention time of the end of 
 The column MZDeviation specifies the approximate m/z deviation of the reference feature (approximately the 95% confidence interval). 
 
 The format to specify the list of wall backgrounds is also a simple tsv file with the following columns:
-MZ | Rtstart | Rtend | MZdeviation
---- | --- | --- | ---
-119.98628 | 900 | 2200 | 20
+| MZ | Rtstart | Rtend | MZdeviation |
+| --- | --- | --- | --- |
+| 119.98628 | 900 | 2200 | 20 |
 
 The column MZ specifies the approximate m/z of the wall background. 
 The column Rtstart specifies the start of the wall in seconds. 
@@ -28,9 +28,9 @@ The column MZdevation specifies the approximate m/z deviation of the wall backgr
 A random retention time between Rtstart and Rtend will be used. To specifically train PeakBot for certain wall backgrounds narrow retention time windows can be used. 
 
 The format to specify the list of other backgrounds is also a simple tsv file with the following columns:
-RTStart | RTEnd | MZLow | MZHigh
---- |--- |--- |---
-200 | 600 | 800 | 1000
+| RTStart | RTEnd | MZLow | MZHigh |
+| --- |--- |--- |--- |
+| 200 | 600 | 800 | 1000 |
 
 The column RTStart specifies the start of the background area in seconds. 
 The column RTEnd specifies the end of the background area in seconds. 
