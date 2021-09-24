@@ -169,13 +169,12 @@ if __name__ == "__main__":
     headers, ebackgrounds = peakbot.readTSVFile("./Reference/PHM_Backgrounds.tsv", convertToMinIfPossible = True)
 
     dsProps = {
-        "T"  : {"files": inFiles , "peaks": wepeaksTrain, "walls": wewalls, "backgrounds": webackgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*peakbot.Config.EPOCHS/len(inFiles))), "shuffleSteps": 1E5},
+        "T"  : {"files": inFiles , "peaks": wepeaksTrain, "walls": wewalls, "backgrounds": webackgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*peakbot.Config.EPOCHS/len(inFiles))), "shuffleSteps": 1E4},
         "V"  : {"files": inFiles , "peaks": wepeaksVal  , "walls": wewalls, "backgrounds": webackgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(inFiles)))                    , "shuffleSteps": 1E4},
         "iT" : {"files": exFiles , "peaks": wepeaksTrain, "walls": wewalls, "backgrounds": webackgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(exFiles)))                    , "shuffleSteps": 1E4},
         "iV" : {"files": exFiles , "peaks": wepeaksVal  , "walls": wewalls, "backgrounds": webackgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(exFiles)))                    , "shuffleSteps": 1E4},
         "eV" : {"files": extFiles, "peaks": epeaks      , "walls": ewalls , "backgrounds": ebackgrounds , "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(extFiles)))                   , "shuffleSteps": 1E4}
     }
-
 
 
 
@@ -195,7 +194,7 @@ if __name__ == "__main__":
     except Exception:
         pass
     
-    for i in range(1):  ## For-loop can be omitted, but is used here for replicate analysis
+    for i in range(5):  ## For-loop can be omitted, but is used here for replicate analysis
         tic("Generated training and validation instances")
         for ds in dsProps.keys():
             print("Processing dataset '%s'"%ds)
@@ -260,9 +259,9 @@ if __name__ == "__main__":
             peakbot.train.shuffleResultsSampleNames(os.path.join(examplesDir, ds), verbose = True)
             peakbot.train.shuffleResults(os.path.join(examplesDir, ds), steps = dsProps[ds]["shuffleSteps"], samplesToExchange = 50, verbose = True)
 
-            tocP("Generated training and validation instances", label="Generated training and validation instances")
-            runTimes.append("Generating new training/validation instances for the dataset '%s' took %.1f seconds"%(ds, toc("Generated training and validation instances")))
-            print("\n\n\n\n\n")
+        tocP("Generated training and validation instances", label="Generated training and validation instances")
+        runTimes.append("Generating new training/validation instances for the datasets took %.1f seconds"%(toc("Generated training and validation instances")))
+        print("\n\n\n\n\n")
 
         
 

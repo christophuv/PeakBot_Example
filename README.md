@@ -37,6 +37,8 @@ The column RTEnd specifies the end of the background area in seconds.
 The column MZLow specifies the lowest m/z of the background area. 
 The column MZHigh specifies the largest m/z of the background area. 
 
+Templates for these three lists are located in the folder Reference of this manuscript and have the names _template_Peaks.tsv, _template_Walls.tsv, and _template_Backgrounds.tsv. 
+
 The actual values of the reference features and backgrounds in the different reference chromatograms are automatically calculated using a gradient-descend appraoch. Thus, these determined reference feature values can vary from chromatogram to chromatogram. However, care must be taken that no co-eluting compounds (isomers) are present. 
 
 PeakBot in general has no difficult data processing parameters. However, the user has to specify the following minimal settings for their chromatograms in order to instruct PeakBot how to train a new model: 

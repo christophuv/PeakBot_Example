@@ -7,8 +7,7 @@
 
 # Imports
 import os
-import pickle
-import tempfile
+from collections import OrderedDict
 import numpy as np
 
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
@@ -65,47 +64,50 @@ if __name__ == "__main__":
     ## mzWeight: the weight given to the m/z for calculating the distance between two features
     ## fileTo: the files to which the grouped results shall be written (without an extension)
     ## file: all files belonging to the dataset
-    expParams = {"WheatEar": {"polarities": {"positive": "Q Exactive (MS lvl: 1, pol: +)", "negative": "Q Exactive (MS lvl: 1, pol: -)"},
-                              "rtMaxDiffKNN":[5, 5, 5], "ppmMaxDiffKNN":[15, 15, 15], "nearestNeighbors":[3, 3, 6], 
-                              "rtMaxDiffGrouping": 2, "ppmMaxDiffGrouping": 5,
-                              "rtWeight": 1, "mzWeight": 0.1,
-                              "fileTo": "./Data/WheatEar",
-                              "files": {"670_Sequence3_LVL1_1"  : {"file": "./Data/WheatEar/670_Sequence3_LVL1_1.mzXML"  },
-                                        "670_Sequence3_LVL1_2"  : {"file": "./Data/WheatEar/670_Sequence3_LVL1_2.mzXML"  },
-                                        "670_Sequence3_LVL1_3"  : {"file": "./Data/WheatEar/670_Sequence3_LVL1_3.mzXML"  },
-                                        "670_Sequence3_LVL1x2_1": {"file": "./Data/WheatEar/670_Sequence3_LVL1x2_1.mzXML"},
-                                        "670_Sequence3_LVL1x2_2": {"file": "./Data/WheatEar/670_Sequence3_LVL1x2_2.mzXML"},
-                                        "670_Sequence3_LVL1x2_3": {"file": "./Data/WheatEar/670_Sequence3_LVL1x2_3.mzXML"},
-                                        "670_Sequence3_LVL1x4_1": {"file": "./Data/WheatEar/670_Sequence3_LVL1x4_1.mzXML"},
-                                        "670_Sequence3_LVL1x4_2": {"file": "./Data/WheatEar/670_Sequence3_LVL1x4_2.mzXML"},
-                                        "670_Sequence3_LVL1x4_3": {"file": "./Data/WheatEar/670_Sequence3_LVL1x4_3.mzXML"},}},
-                
-                 "PHM": {"polarities": {"positive": "LTQ Orbitrap Velos (MS lvl: 1, pol: +)"},
-                         "rtMaxDiffKNN":[5, 5, 5], "ppmMaxDiffKNN":[15, 15, 15], "nearestNeighbors":[3, 3, 6], 
-                         "rtMaxDiffGrouping": 5, "ppmMaxDiffGrouping": 5,
-                         "rtWeight": 1, "mzWeight": 0.1,
-                         "fileTo": "./Data/PHM",
-                         "files": {"05_EB3388_AOH_p_0" : {"file": "./Data/PHM/05_EB3388_AOH_p_0.mzXML" },
-                                   "06_EB3389_AOH_p_10": {"file": "./Data/PHM/06_EB3389_AOH_p_10.mzXML"},
-                                   "07_EB3390_AOH_p_20": {"file": "./Data/PHM/07_EB3390_AOH_p_20.mzXML"},
-                                   "08_EB3391_AOH_p_60": {"file": "./Data/PHM/08_EB3391_AOH_p_60.mzXML"},
-                                   "16_EB3392_AME_p_0" : {"file": "./Data/PHM/16_EB3392_AME_p_0.mzXML" },
-                                   "17_EB3393_AME_p_10": {"file": "./Data/PHM/17_EB3393_AME_p_10.mzXML"},
-                                   "18_EB3394_AME_p_20": {"file": "./Data/PHM/18_EB3394_AME_p_20.mzXML"},
-                                   "19_EB3395_AME_p_60": {"file": "./Data/PHM/19_EB3395_AME_p_60.mzXML"},}},
-                 
-                 "HT29": {"polarities": {"positive": "Q Exactive HF (MS lvl: 1, pol: +)"},
-                          "rtMaxDiffKNN":[5, 5, 5], "ppmMaxDiffKNN":[15, 15, 15], "nearestNeighbors":[3, 3, 6], 
-                          "rtMaxDiffGrouping": 5, "ppmMaxDiffGrouping": 5,
-                          "rtWeight": 1, "mzWeight": 0.1,
-                          "fileTo": "./Data/HT29",
-                          "files": {"HT_SOL1_LYS_010_pos": {"file": "./Data/HT29/HT_SOL1_LYS_010_pos.mzXML"},
-                                    "HT_SOL1_SUP_025_pos": {"file": "./Data/HT29/HT_SOL1_SUP_025_pos.mzXML"},
-                                    "HT_SOL2_LYS_014_pos": {"file": "./Data/HT29/HT_SOL2_LYS_014_pos.mzXML"},
-                                    "HT_SOL2_SUP_029_pos": {"file": "./Data/HT29/HT_SOL2_SUP_029_pos.mzXML"},
-                                    "HT_SOL3_LYS_018_pos": {"file": "./Data/HT29/HT_SOL3_LYS_018_pos.mzXML"},
-                                    "HT_SOL3_LYS_033_pos": {"file": "./Data/HT29/HT_SOL3_SUP_033_pos.mzXML"},}},
-                }
+    expParams = OrderedDict()
+    expParams["WheatEar"] = {"polarities": {"positive": "Q Exactive (MS lvl: 1, pol: +)", "negative": "Q Exactive (MS lvl: 1, pol: -)"},
+                             "rtMaxDiffKNN":[5, 5, 5], "ppmMaxDiffKNN":[15, 15, 15], "nearestNeighbors":[3, 3, 6], 
+                             "rtMaxDiffGrouping": 2, "ppmMaxDiffGrouping": 5,
+                             "rtWeight": 1, "mzWeight": 0.1,
+                             "fileTo": "./Data/WheatEar",
+                             "files": {"670_Sequence3_LVL1_1"  : {"file": "./Data/WheatEar/670_Sequence3_LVL1_1.mzXML"  },
+                                       "670_Sequence3_LVL1_2"  : {"file": "./Data/WheatEar/670_Sequence3_LVL1_2.mzXML"  },
+                                       "670_Sequence3_LVL1_3"  : {"file": "./Data/WheatEar/670_Sequence3_LVL1_3.mzXML"  },
+                                       "670_Sequence3_LVL1x2_1": {"file": "./Data/WheatEar/670_Sequence3_LVL1x2_1.mzXML"},
+                                       "670_Sequence3_LVL1x2_2": {"file": "./Data/WheatEar/670_Sequence3_LVL1x2_2.mzXML"},
+                                       "670_Sequence3_LVL1x2_3": {"file": "./Data/WheatEar/670_Sequence3_LVL1x2_3.mzXML"},
+                                       "670_Sequence3_LVL1x4_1": {"file": "./Data/WheatEar/670_Sequence3_LVL1x4_1.mzXML"},
+                                       "670_Sequence3_LVL1x4_2": {"file": "./Data/WheatEar/670_Sequence3_LVL1x4_2.mzXML"},
+                                       "670_Sequence3_LVL1x4_3": {"file": "./Data/WheatEar/670_Sequence3_LVL1x4_3.mzXML"},
+                            }}
+    
+    expParams["PHM"] = {"polarities": {"positive": "LTQ Orbitrap Velos (MS lvl: 1, pol: +)"},
+                        "rtMaxDiffKNN":[5, 5, 5], "ppmMaxDiffKNN":[15, 15, 15], "nearestNeighbors":[3, 3, 6], 
+                        "rtMaxDiffGrouping": 5, "ppmMaxDiffGrouping": 5,
+                        "rtWeight": 1, "mzWeight": 0.1,
+                        "fileTo": "./Data/PHM",
+                        "files": {"05_EB3388_AOH_p_0" : {"file": "./Data/PHM/05_EB3388_AOH_p_0.mzXML" },
+                                "06_EB3389_AOH_p_10": {"file": "./Data/PHM/06_EB3389_AOH_p_10.mzXML"},
+                                "07_EB3390_AOH_p_20": {"file": "./Data/PHM/07_EB3390_AOH_p_20.mzXML"},
+                                "08_EB3391_AOH_p_60": {"file": "./Data/PHM/08_EB3391_AOH_p_60.mzXML"},
+                                "16_EB3392_AME_p_0" : {"file": "./Data/PHM/16_EB3392_AME_p_0.mzXML" },
+                                "17_EB3393_AME_p_10": {"file": "./Data/PHM/17_EB3393_AME_p_10.mzXML"},
+                                "18_EB3394_AME_p_20": {"file": "./Data/PHM/18_EB3394_AME_p_20.mzXML"},
+                                "19_EB3395_AME_p_60": {"file": "./Data/PHM/19_EB3395_AME_p_60.mzXML"},
+                        }}
+    
+    expParams["MTBLS1358"] = {"polarities": {"positive": "Q Exactive HF (MS lvl: 1, pol: +)"},
+                            "rtMaxDiffKNN":[5, 5, 5], "ppmMaxDiffKNN":[15, 15, 15], "nearestNeighbors":[3, 3, 6], 
+                            "rtMaxDiffGrouping": 5, "ppmMaxDiffGrouping": 5,
+                            "rtWeight": 1, "mzWeight": 0.1,
+                            "fileTo": "./Data/MTBLS1358",
+                            "files": {"HT_SOL1_LYS_010_pos": {"file": "./Data/MTBLS1358/HT_SOL1_LYS_010_pos.mzXML"},
+                                        "HT_SOL1_SUP_025_pos": {"file": "./Data/MTBLS1358/HT_SOL1_SUP_025_pos.mzXML"},
+                                        "HT_SOL2_LYS_014_pos": {"file": "./Data/MTBLS1358/HT_SOL2_LYS_014_pos.mzXML"},
+                                        "HT_SOL2_SUP_029_pos": {"file": "./Data/MTBLS1358/HT_SOL2_SUP_029_pos.mzXML"},
+                                        "HT_SOL3_LYS_018_pos": {"file": "./Data/MTBLS1358/HT_SOL3_LYS_018_pos.mzXML"},
+                                        "HT_SOL3_LYS_033_pos": {"file": "./Data/MTBLS1358/HT_SOL3_SUP_033_pos.mzXML"},
+                            }}
     
 
     ###############################################
@@ -153,17 +155,6 @@ if __name__ == "__main__":
                     row.insert(0, a)
                     row.append(-1)
                     row.append(-1)
-
-                if False:
-                    use = []
-
-                    for rowi, row in enumerate(rows):
-                        #if 495 < row[2] < 510 and 445 < row[3] < 458:
-                        if 615 < row[2] < 629 and 261.2 < row[3] < 261.3:
-                            use.append(rowi)
-
-                    if len(use) > 0:
-                        rows = [rows[i] for i in use]
 
                 if len(rows) > 0:
                     if features is None:
