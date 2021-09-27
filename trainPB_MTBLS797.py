@@ -78,9 +78,9 @@ if __name__ == "__main__":
     ## interScanMaxSimilarSignalDifferencePPM: Maximum difference of signals representing the same profile mode signal
     ## minIntensity: All signals below this threshold are not considered for the local maximum detection
     expParams = {"MTBLS797": {"polarities": {"positive": "Exactive (MS lvl: 1, pol: +)"},
-                              "minRT":100, "maxRT":2200, "RTpeakWidth":[2,30], "SavitzkyGolayWindowPlusMinus": 2,
+                              "minRT":100, "maxRT":2200, "RTpeakWidth":[2,30], "SavitzkyGolayWindowPlusMinus": 1,
                               "intraScanMaxAdjacentSignalDifferencePPM":15, "interScanMaxSimilarSignalDifferencePPM":3,
-                              "noiseLevel":1E3, "minIntensity":3E4},}
+                              "noiseLevel":1E3, "minIntensity":1E4},}
 
     ###############################################
     ### chromatograms to process
@@ -91,13 +91,13 @@ if __name__ == "__main__":
     ## params: parameter collection for the particular sample (see variable expParams)
     inFiles = {
         "Dotsha10" : {"file": "./Data/MTBLS797/Dotsha10.mzXML", "params": "MTBLS797"},
-        #"Dotsha13" : {"file": "./Data/MTBLS797/Dotsha13.mzXML", "params": "MTBLS797"},
-        #"Dotsha14" : {"file": "./Data/MTBLS797/Dotsha14.mzXML", "params": "MTBLS797"},
+        "Dotsha13" : {"file": "./Data/MTBLS797/Dotsha13.mzXML", "params": "MTBLS797"},
+        "Dotsha14" : {"file": "./Data/MTBLS797/Dotsha14.mzXML", "params": "MTBLS797"},
     }
     exFiles = {
         "Dotsha11" : {"file": "./Data/MTBLS797/Dotsha11.mzXML", "params": "MTBLS797"},
-        #"Dotsha12" : {"file": "./Data/MTBLS797/Dotsha12.mzXML", "params": "MTBLS797"},
-        #"Dotsha15" : {"file": "./Data/MTBLS797/Dotsha15.mzXML", "params": "MTBLS797"},
+        "Dotsha12" : {"file": "./Data/MTBLS797/Dotsha12.mzXML", "params": "MTBLS797"},
+        "Dotsha15" : {"file": "./Data/MTBLS797/Dotsha15.mzXML", "params": "MTBLS797"},
     }
 
     ###############################################
@@ -177,7 +177,7 @@ if __name__ == "__main__":
     except Exception:
         pass
     
-    for i in range(1):
+    for i in range(5):
         tic("Generated training and validation instances")
         for ds in dsProps.keys():
             print("Processing dataset '%s'"%ds)
@@ -263,9 +263,9 @@ if __name__ == "__main__":
                 addValDS.append({"folder": os.path.join(examplesDir, ds), "name": ds, "numBatches": 512})
 
             pb, hist = peakbot.trainPeakBotModel(trainInstancesPath = os.path.join(examplesDir, "T"),
-                                                addValidationInstances = addValDS,
-                                                logBaseDir = logDir,
-                                                verbose = True)
+                                                 addValidationInstances = addValDS,
+                                                 logBaseDir = logDir,
+                                                 verbose = True)
 
             pb.saveModelToFile(peakBotModelFile)
             print("Newly trained peakbot saved to file '%s'"%(peakBotModelFile))
