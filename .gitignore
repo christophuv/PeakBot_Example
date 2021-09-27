@@ -1,3 +1,6 @@
-Data/
+Data/*
+Data/*.*
+!Data/README.md
+
 temp/
 .ipynb_checkpoints/
