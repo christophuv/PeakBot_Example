@@ -13,8 +13,11 @@ from collections import OrderedDict
 
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-import tensorflow as tf
-tf.config.experimental.set_memory_growth(tf.config.experimental.list_physical_devices('GPU')[0], True)
+import tensorflow as tf## set memory limit on the GPU to 2GB to not run into problems with the pre- and post-processing steps
+tf.config.experimental.set_virtual_device_configuration(
+    tf.config.experimental.list_physical_devices('GPU')[0],
+    [tf.config.experimental.VirtualDeviceConfiguration(memory_limit = 2048)]
+)
 
 import sys
 sys.path.append(os.path.join("..", "peakbot", "src"))
