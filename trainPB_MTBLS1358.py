@@ -78,7 +78,7 @@ if __name__ == "__main__":
     ## interScanMaxSimilarSignalDifferencePPM: Maximum difference of signals representing the same profile mode signal
     ## minIntensity: All signals below this threshold are not considered for the local maximum detection
     expParams = {"MTBLS1358": {"polarities": {"positive": "Q Exactive HF (MS lvl: 1, pol: +)"},
-                               "minRT":30, "maxRT":680, "RTpeakWidth":[2,30], 
+                               "minRT":30, "maxRT":680, "RTpeakWidth":[2,30], "SavitzkyGolayWindowPlusMinus": 3,
                                "intraScanMaxAdjacentSignalDifferencePPM":15, "interScanMaxSimilarSignalDifferencePPM":3,
                                "noiseLevel":1E3, "minIntensity":1E5},}
 

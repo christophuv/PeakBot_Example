@@ -15,7 +15,7 @@ import pandas as pd
 import plotnine as p9
 
 ## Specific tensorflow configuration. Can re omitted
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 import tensorflow as tf

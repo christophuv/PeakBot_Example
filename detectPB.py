@@ -81,11 +81,11 @@ if __name__ == "__main__":
     # Wheat ear (similar to untreated samples of: Stable Isotope–Assisted Plant Metabolomics: Combination of Global and Tracer-Based Labeling for Enhanced Untargeted Profiling and Compound Annotation)
     # https://doi.org/10.3389/fpls.2019.01366
     expParams["WheatEar"] = {"PeakBotModel": "./temp/PBmodel_WheatEar.model.h5",
-                             "polarities": {"positive": "Q Exactive (MS lvl: 1, pol: +)", 
+                            "polarities": {"positive": "Q Exactive (MS lvl: 1, pol: +)", 
                                             "negative": "Q Exactive (MS lvl: 1, pol: -)"},
-                             "minRT":150, "maxRT":2250, "RTpeakWidth":[8,120], "SavitzkyGolayWindowPlusMinus": 3,
-                             "intraScanMaxAdjacentSignalDifferencePPM":15, "interScanMaxSimilarSignalDifferencePPM":3,
-                             "noiseLevel":1E3, "minIntensity":1E5}
+                            "minRT":150, "maxRT":2250, "RTpeakWidth":[8,120], "SavitzkyGolayWindowPlusMinus": 3,
+                            "intraScanMaxAdjacentSignalDifferencePPM":15, "interScanMaxSimilarSignalDifferencePPM":3,
+                            "noiseLevel":1E3, "minIntensity":1E5}
     inFiles["670_Sequence3_LVL1_1"    ] = {"file": "./Data/WheatEar/670_Sequence3_LVL1_1.mzXML"  , "params": "WheatEar"}
     inFiles["670_Sequence3_LVL1_2"    ] = {"file": "./Data/WheatEar/670_Sequence3_LVL1_2.mzXML"  , "params": "WheatEar"}
     inFiles["670_Sequence3_LVL1_3"    ] = {"file": "./Data/WheatEar/670_Sequence3_LVL1_3.mzXML"  , "params": "WheatEar"}
@@ -95,92 +95,92 @@ if __name__ == "__main__":
     inFiles["670_Sequence3_LVL1x4_1"  ] = {"file": "./Data/WheatEar/670_Sequence3_LVL1x4_1.mzXML", "params": "WheatEar"}
     inFiles["670_Sequence3_LVL1x4_2"  ] = {"file": "./Data/WheatEar/670_Sequence3_LVL1x4_2.mzXML", "params": "WheatEar"}
     inFiles["670_Sequence3_LVL1x4_3"  ] = {"file": "./Data/WheatEar/670_Sequence3_LVL1x4_3.mzXML", "params": "WheatEar"}
-    if False:
-        # Unreleased data
-        # AOH and AME metabolism in PHM cell lines
-        expParams["PHM"] = {"PeakBotModel": "./temp/PBmodel_WheatEar.model.h5",
-                            "polarities": {"positive": "LTQ Orbitrap Velos (MS lvl: 1, pol: +)"},
-                            "minRT":100, "maxRT":750, "RTpeakWidth":[4,120], "SavitzkyGolayWindowPlusMinus": 3,
+    
+    # Unreleased data
+    # AOH and AME metabolism in PHM cell lines
+    expParams["PHM"] = {"PeakBotModel": "./temp/PBmodel_WheatEar.model.h5",
+                        "polarities": {"positive": "LTQ Orbitrap Velos (MS lvl: 1, pol: +)"},
+                        "minRT":100, "maxRT":750, "RTpeakWidth":[4,120], "SavitzkyGolayWindowPlusMinus":3,
+                        "intraScanMaxAdjacentSignalDifferencePPM":15, "interScanMaxSimilarSignalDifferencePPM":3,
+                        "noiseLevel":1E3, "minIntensity":1E5}
+    inFiles["05_EB3388_AOH_p_0" ] = {"file": "./Data/PHM/05_EB3388_AOH_p_0.mzXML" , "params": "PHM"}
+    inFiles["06_EB3389_AOH_p_10"] = {"file": "./Data/PHM/06_EB3389_AOH_p_10.mzXML", "params": "PHM"}
+    inFiles["07_EB3390_AOH_p_20"] = {"file": "./Data/PHM/07_EB3390_AOH_p_20.mzXML", "params": "PHM"}
+    inFiles["08_EB3391_AOH_p_60"] = {"file": "./Data/PHM/08_EB3391_AOH_p_60.mzXML", "params": "PHM"}
+    inFiles["16_EB3392_AME_p_0" ] = {"file": "./Data/PHM/16_EB3392_AME_p_0.mzXML" , "params": "PHM"}
+    inFiles["17_EB3393_AME_p_10"] = {"file": "./Data/PHM/17_EB3393_AME_p_10.mzXML", "params": "PHM"}
+    inFiles["18_EB3394_AME_p_20"] = {"file": "./Data/PHM/18_EB3394_AME_p_20.mzXML", "params": "PHM"}
+    inFiles["19_EB3395_AME_p_60"] = {"file": "./Data/PHM/19_EB3395_AME_p_60.mzXML", "params": "PHM"}
+    
+    # MTBLS1358: Stable Isotope-Assisted Metabolomics for Deciphering Xenobiotic Metabolism in Mammalian Cell Culture
+    # https://www.ebi.ac.uk/metabolights/MTBLS1358/descriptors
+    expParams["MTBLS1358"] = {"PeakBotModel": "./temp/PBmodel_MTBLS1358.model.h5",
+                            "polarities": {"positive": "Q Exactive HF (MS lvl: 1, pol: +)"},
+                            "minRT":30, "maxRT":680, "RTpeakWidth":[2,30], "SavitzkyGolayWindowPlusMinus": 2,
                             "intraScanMaxAdjacentSignalDifferencePPM":15, "interScanMaxSimilarSignalDifferencePPM":3,
                             "noiseLevel":1E3, "minIntensity":1E5}
-        inFiles["05_EB3388_AOH_p_0" ] = {"file": "./Data/PHM/05_EB3388_AOH_p_0.mzXML" , "params": "PHM"}
-        inFiles["06_EB3389_AOH_p_10"] = {"file": "./Data/PHM/06_EB3389_AOH_p_10.mzXML", "params": "PHM"}
-        inFiles["07_EB3390_AOH_p_20"] = {"file": "./Data/PHM/07_EB3390_AOH_p_20.mzXML", "params": "PHM"}
-        inFiles["08_EB3391_AOH_p_60"] = {"file": "./Data/PHM/08_EB3391_AOH_p_60.mzXML", "params": "PHM"}
-        inFiles["16_EB3392_AME_p_0" ] = {"file": "./Data/PHM/16_EB3392_AME_p_0.mzXML" , "params": "PHM"}
-        inFiles["17_EB3393_AME_p_10"] = {"file": "./Data/PHM/17_EB3393_AME_p_10.mzXML", "params": "PHM"}
-        inFiles["18_EB3394_AME_p_20"] = {"file": "./Data/PHM/18_EB3394_AME_p_20.mzXML", "params": "PHM"}
-        inFiles["19_EB3395_AME_p_60"] = {"file": "./Data/PHM/19_EB3395_AME_p_60.mzXML", "params": "PHM"}
-        
-        # MTBLS1358: Stable Isotope-Assisted Metabolomics for Deciphering Xenobiotic Metabolism in Mammalian Cell Culture
-        # https://www.ebi.ac.uk/metabolights/MTBLS1358/descriptors
-        expParams["MTBLS1358"] = {"PeakBotModel": "./temp/PBmodel_MTBLS1358.model.h5",
-                                "polarities": {"positive": "Q Exactive HF (MS lvl: 1, pol: +)"},
-                                "minRT":30, "maxRT":680, "RTpeakWidth":[2,30], "SavitzkyGolayWindowPlusMinus": 2,
-                                "intraScanMaxAdjacentSignalDifferencePPM":15, "interScanMaxSimilarSignalDifferencePPM":3,
-                                "noiseLevel":1E3, "minIntensity":1E5}
-        inFiles["HT_SOL1_LYS_010_pos_cm"] = {"file": "./Data/MTBLS1358/HT_SOL1_LYS_010_pos.mzXML", "params": "MTBLS1358"}
-        inFiles["HT_SOL1_SUP_025_pos_cm"] = {"file": "./Data/MTBLS1358/HT_SOL1_SUP_025_pos.mzXML", "params": "MTBLS1358"}
-        inFiles["HT_SOL2_LYS_014_pos_cm"] = {"file": "./Data/MTBLS1358/HT_SOL2_LYS_014_pos.mzXML", "params": "MTBLS1358"}
-        inFiles["HT_SOL2_SUP_029_pos_cm"] = {"file": "./Data/MTBLS1358/HT_SOL2_SUP_029_pos.mzXML", "params": "MTBLS1358"}
-        inFiles["HT_SOL3_LYS_018_pos_cm"] = {"file": "./Data/MTBLS1358/HT_SOL3_LYS_018_pos.mzXML", "params": "MTBLS1358"}
-        inFiles["HT_SOL3_LYS_033_pos_cm"] = {"file": "./Data/MTBLS1358/HT_SOL3_SUP_033_pos.mzXML", "params": "MTBLS1358"}
+    inFiles["HT_SOL1_LYS_010_pos_cm"] = {"file": "./Data/MTBLS1358/HT_SOL1_LYS_010_pos.mzXML", "params": "MTBLS1358"}
+    inFiles["HT_SOL1_SUP_025_pos_cm"] = {"file": "./Data/MTBLS1358/HT_SOL1_SUP_025_pos.mzXML", "params": "MTBLS1358"}
+    inFiles["HT_SOL2_LYS_014_pos_cm"] = {"file": "./Data/MTBLS1358/HT_SOL2_LYS_014_pos.mzXML", "params": "MTBLS1358"}
+    inFiles["HT_SOL2_SUP_029_pos_cm"] = {"file": "./Data/MTBLS1358/HT_SOL2_SUP_029_pos.mzXML", "params": "MTBLS1358"}
+    inFiles["HT_SOL3_LYS_018_pos_cm"] = {"file": "./Data/MTBLS1358/HT_SOL3_LYS_018_pos.mzXML", "params": "MTBLS1358"}
+    inFiles["HT_SOL3_LYS_033_pos_cm"] = {"file": "./Data/MTBLS1358/HT_SOL3_SUP_033_pos.mzXML", "params": "MTBLS1358"}
 
-        # MTBLS797: Bluebell saponins: Application of metabolomics and molecular networking
-        # https://www.ebi.ac.uk/metabolights/MTBLS797/descriptors
-        expParams["MTBLS797"] = {"PeakBotModel": "./temp/PBmodel_MTBLS797.model.h5",
-                                "polarities": {"positive": "Exactive (MS lvl: 1, pol: +)", 
-                                                "negative": "Exactive (MS lvl: 1, pol: -)"},
-                                "minRT":100, "maxRT":2200, "RTpeakWidth":[2,30], "SavitzkyGolayWindowPlusMinus": 2,
-                                "intraScanMaxAdjacentSignalDifferencePPM":15, "interScanMaxSimilarSignalDifferencePPM":3,
-                                "noiseLevel":1E3, "minIntensity":1E4}
-        inFiles["Dotsha01"] = {"file": "./Data/MTBLS797/Dotsha01.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha02"] = {"file": "./Data/MTBLS797/Dotsha02.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha03"] = {"file": "./Data/MTBLS797/Dotsha03.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha04"] = {"file": "./Data/MTBLS797/Dotsha04.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha05"] = {"file": "./Data/MTBLS797/Dotsha05.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha06"] = {"file": "./Data/MTBLS797/Dotsha06.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha07"] = {"file": "./Data/MTBLS797/Dotsha07.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha08"] = {"file": "./Data/MTBLS797/Dotsha08.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha09"] = {"file": "./Data/MTBLS797/Dotsha09.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha10"] = {"file": "./Data/MTBLS797/Dotsha10.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha11"] = {"file": "./Data/MTBLS797/Dotsha11.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha12"] = {"file": "./Data/MTBLS797/Dotsha12.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha13"] = {"file": "./Data/MTBLS797/Dotsha13.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha14"] = {"file": "./Data/MTBLS797/Dotsha14.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha15"] = {"file": "./Data/MTBLS797/Dotsha15.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha16"] = {"file": "./Data/MTBLS797/Dotsha16.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha17"] = {"file": "./Data/MTBLS797/Dotsha17.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha18"] = {"file": "./Data/MTBLS797/Dotsha18.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha19"] = {"file": "./Data/MTBLS797/Dotsha19.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha20"] = {"file": "./Data/MTBLS797/Dotsha20.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha21"] = {"file": "./Data/MTBLS797/Dotsha21.mzXML", "params": "MTBLS797"}
-        inFiles["Dotsha22"] = {"file": "./Data/MTBLS797/Dotsha22.mzXML", "params": "MTBLS797"}
+    # MTBLS797: Bluebell saponins: Application of metabolomics and molecular networking
+    # https://www.ebi.ac.uk/metabolights/MTBLS797/descriptors
+    expParams["MTBLS797"] = {"PeakBotModel": "./temp/PBmodel_MTBLS797.model.h5",
+                            "polarities": {"positive": "Exactive (MS lvl: 1, pol: +)", 
+                                            "negative": "Exactive (MS lvl: 1, pol: -)"},
+                            "minRT":100, "maxRT":2200, "RTpeakWidth":[2,30], "SavitzkyGolayWindowPlusMinus": 2,
+                            "intraScanMaxAdjacentSignalDifferencePPM":15, "interScanMaxSimilarSignalDifferencePPM":3,
+                            "noiseLevel":1E3, "minIntensity":1E4}
+    inFiles["Dotsha01"] = {"file": "./Data/MTBLS797/Dotsha01.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha02"] = {"file": "./Data/MTBLS797/Dotsha02.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha03"] = {"file": "./Data/MTBLS797/Dotsha03.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha04"] = {"file": "./Data/MTBLS797/Dotsha04.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha05"] = {"file": "./Data/MTBLS797/Dotsha05.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha06"] = {"file": "./Data/MTBLS797/Dotsha06.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha07"] = {"file": "./Data/MTBLS797/Dotsha07.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha08"] = {"file": "./Data/MTBLS797/Dotsha08.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha09"] = {"file": "./Data/MTBLS797/Dotsha09.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha10"] = {"file": "./Data/MTBLS797/Dotsha10.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha11"] = {"file": "./Data/MTBLS797/Dotsha11.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha12"] = {"file": "./Data/MTBLS797/Dotsha12.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha13"] = {"file": "./Data/MTBLS797/Dotsha13.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha14"] = {"file": "./Data/MTBLS797/Dotsha14.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha15"] = {"file": "./Data/MTBLS797/Dotsha15.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha16"] = {"file": "./Data/MTBLS797/Dotsha16.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha17"] = {"file": "./Data/MTBLS797/Dotsha17.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha18"] = {"file": "./Data/MTBLS797/Dotsha18.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha19"] = {"file": "./Data/MTBLS797/Dotsha19.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha20"] = {"file": "./Data/MTBLS797/Dotsha20.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha21"] = {"file": "./Data/MTBLS797/Dotsha21.mzXML", "params": "MTBLS797"}
+    inFiles["Dotsha22"] = {"file": "./Data/MTBLS797/Dotsha22.mzXML", "params": "MTBLS797"}
 
-        # MTBLS868: Mining for natural product antileishmanials in a fungal extract library
-        # https://www.ebi.ac.uk/metabolights/MTBLS868/descriptors
-        expParams["MTBLS868"] = {"PeakBotModel": "./temp/PBmodel_MTBLS868.model.h5",
-                                "polarities": {"positive": "Q Exactive (MS lvl: 1, pol: +)", 
-                                                "negative": "Q Exactive (MS lvl: 1, pol: -)"},
-                                "minRT":100, "maxRT":1400, "RTpeakWidth":[5,120], "SavitzkyGolayWindowPlusMinus": 1,
-                                "intraScanMaxAdjacentSignalDifferencePPM":15, "interScanMaxSimilarSignalDifferencePPM":3,
-                                "noiseLevel":1E3, "minIntensity":1E5}
-        inFiles["HD871_1_1"     ] = {"file": "./Data/MTBLS868/HD871_1_1.mzXML"     , "params": "MTBLS868"}
-        inFiles["HD871_1_2"     ] = {"file": "./Data/MTBLS868/HD871_1_2.mzXML"     , "params": "MTBLS868"}
-        inFiles["HD871_1_3"     ] = {"file": "./Data/MTBLS868/HD871_1_3.mzXML"     , "params": "MTBLS868"}
-        inFiles["HD871_1_4"     ] = {"file": "./Data/MTBLS868/HD871_1_4.mzXML"     , "params": "MTBLS868"}
-        inFiles["HD871_2_1"     ] = {"file": "./Data/MTBLS868/HD871_2_1.mzXML"     , "params": "MTBLS868"}
-        inFiles["HD871_2_2"     ] = {"file": "./Data/MTBLS868/HD871_2_2.mzXML"     , "params": "MTBLS868"}
-        inFiles["HD871_2_3"     ] = {"file": "./Data/MTBLS868/HD871_2_3.mzXML"     , "params": "MTBLS868"}
-        inFiles["HD871_2_4"     ] = {"file": "./Data/MTBLS868/HD871_2_4.mzXML"     , "params": "MTBLS868"}
-        inFiles["Untreated_1"   ] = {"file": "./Data/MTBLS868/Untreated_1.mzXML"   , "params": "MTBLS868"}
-        inFiles["Untreated_2"   ] = {"file": "./Data/MTBLS868/Untreated_2.mzXML"   , "params": "MTBLS868"}
-        inFiles["Untreated_3"   ] = {"file": "./Data/MTBLS868/Untreated_3.mzXML"   , "params": "MTBLS868"}
-        inFiles["Untreated_4"   ] = {"file": "./Data/MTBLS868/Untreated_4.mzXML"   , "params": "MTBLS868"}
-        inFiles["matrix_blank_1"] = {"file": "./Data/MTBLS868/matrix_blank_1.mzXML", "params": "MTBLS868"}
-        inFiles["matrix_blank_2"] = {"file": "./Data/MTBLS868/matrix_blank_2.mzXML", "params": "MTBLS868"}
-        inFiles["matrix_blank_3"] = {"file": "./Data/MTBLS868/matrix_blank_3.mzXML", "params": "MTBLS868"}
-        inFiles["matrix_blank_4"] = {"file": "./Data/MTBLS868/matrix_blank_4.mzXML", "params": "MTBLS868"}
+    # MTBLS868: Mining for natural product antileishmanials in a fungal extract library
+    # https://www.ebi.ac.uk/metabolights/MTBLS868/descriptors
+    expParams["MTBLS868"] = {"PeakBotModel": "./temp/PBmodel_MTBLS868.model.h5",
+                            "polarities": {"positive": "Q Exactive (MS lvl: 1, pol: +)", 
+                                            "negative": "Q Exactive (MS lvl: 1, pol: -)"},
+                            "minRT":100, "maxRT":1400, "RTpeakWidth":[5,120], "SavitzkyGolayWindowPlusMinus": 1,
+                            "intraScanMaxAdjacentSignalDifferencePPM":15, "interScanMaxSimilarSignalDifferencePPM":3,
+                            "noiseLevel":1E3, "minIntensity":1E5}
+    inFiles["HD871_1_1"     ] = {"file": "./Data/MTBLS868/HD871_1_1.mzXML"     , "params": "MTBLS868"}
+    inFiles["HD871_1_2"     ] = {"file": "./Data/MTBLS868/HD871_1_2.mzXML"     , "params": "MTBLS868"}
+    inFiles["HD871_1_3"     ] = {"file": "./Data/MTBLS868/HD871_1_3.mzXML"     , "params": "MTBLS868"}
+    inFiles["HD871_1_4"     ] = {"file": "./Data/MTBLS868/HD871_1_4.mzXML"     , "params": "MTBLS868"}
+    inFiles["HD871_2_1"     ] = {"file": "./Data/MTBLS868/HD871_2_1.mzXML"     , "params": "MTBLS868"}
+    inFiles["HD871_2_2"     ] = {"file": "./Data/MTBLS868/HD871_2_2.mzXML"     , "params": "MTBLS868"}
+    inFiles["HD871_2_3"     ] = {"file": "./Data/MTBLS868/HD871_2_3.mzXML"     , "params": "MTBLS868"}
+    inFiles["HD871_2_4"     ] = {"file": "./Data/MTBLS868/HD871_2_4.mzXML"     , "params": "MTBLS868"}
+    inFiles["Untreated_1"   ] = {"file": "./Data/MTBLS868/Untreated_1.mzXML"   , "params": "MTBLS868"}
+    inFiles["Untreated_2"   ] = {"file": "./Data/MTBLS868/Untreated_2.mzXML"   , "params": "MTBLS868"}
+    inFiles["Untreated_3"   ] = {"file": "./Data/MTBLS868/Untreated_3.mzXML"   , "params": "MTBLS868"}
+    inFiles["Untreated_4"   ] = {"file": "./Data/MTBLS868/Untreated_4.mzXML"   , "params": "MTBLS868"}
+    inFiles["matrix_blank_1"] = {"file": "./Data/MTBLS868/matrix_blank_1.mzXML", "params": "MTBLS868"}
+    inFiles["matrix_blank_2"] = {"file": "./Data/MTBLS868/matrix_blank_2.mzXML", "params": "MTBLS868"}
+    inFiles["matrix_blank_3"] = {"file": "./Data/MTBLS868/matrix_blank_3.mzXML", "params": "MTBLS868"}
+    inFiles["matrix_blank_4"] = {"file": "./Data/MTBLS868/matrix_blank_4.mzXML", "params": "MTBLS868"}
 
     ###############################################
     ## GPU information
@@ -245,6 +245,7 @@ if __name__ == "__main__":
                         griddim  = griddim, 
                         verbose = True)
                 print("")
+                TabLog().addData("%s - %s"%(inFile, filterLine), "LM", len(peaks))
                 peakbot.exportLocalMaximaAsFeatureML("%s_%sLM.featureML"%(fileProps["file"].replace(".mzXML", ""), polarity), peaks)
                 
                 ###############################################
