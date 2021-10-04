@@ -123,7 +123,7 @@ expName = "MTBLS1358"
 ## intraScanMaxAdjacentSignalDifferencePPM: Maximum difference of signals belonging to the same profile mode peak
 ## interScanMaxSimilarSignalDifferencePPM: Maximum difference of signals representing the same profile mode signal
 ## minIntensity: All signals below this threshold are not considered for the local maximum detection
-expParams = {"PeakBotModel": os.path.join(".", expName, "Model", "PBmodel_WheatEar.model.h5"),
+expParams = {"PeakBotModel": os.path.join(".", expName, "Model", "PBmodel_MTBLS1358.model.h5"),
              "polarities": {"positive": "Q Exactive HF (MS lvl: 1, pol: +)"},
              "minRT": 30, "maxRT": 680, "RTpeakWidth":[2,30], "SavitzkyGolayWindowPlusMinus": 3,
              "intraScanMaxAdjacentSignalDifferencePPM": 15, "interScanMaxSimilarSignalDifferencePPM": 3,
@@ -137,7 +137,7 @@ inFiles = {
 }
 exFiles = {
     "HT_SOL3_LYS_018_pos": os.path.join(".", expName, "Data", "HT_SOL3_LYS_018_pos.mzXML"),
-    "HT_SOL3_SUP_033_pos": os.path.join(".", expName, "Data", "HT_SOL3_SUP_033_pos.mzXML"),
+    #"HT_SOL3_SUP_033_pos": os.path.join(".", expName, "Data", "HT_SOL3_SUP_033_pos.mzXML"), ## Reference peaks are not taken from SUP samples, thus they should not be used here
 }
 
 
@@ -229,6 +229,8 @@ import plotnine as p9
 #
 
 ## Load the PeakBot package
+import sys
+sys.path.append(os.path.join("..", "peakbot", "src"))
 import peakbot
 import peakbot.train.cuda
 import peakbot.Chromatogram
