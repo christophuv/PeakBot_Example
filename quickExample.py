@@ -4,6 +4,30 @@
 import sys
 import os
 
+def getUserInput(message, options={"yes": ["yes", "y"], "no": ["no", "n"]}, default = None):
+    
+    ok = False
+    printErr = False
+    foundOpt = None
+    while not ok:
+        if printErr:
+            print("Error, please only provide one of the listed options")
+        print(message)
+        print("Options (select an answer and provide one of the strings that qualify for this answer): ")
+        for opt in options.keys():
+            print("  %s%s: %s"%(opt, "(default if you just press Enter)" if default == opt else "", ", ".join(s for s in options[opt])))
+        value = input("Input: ")
+        if value == "":
+            value = default
+
+        for opt in options.keys():
+            if value in options[opt]:
+                foundOpt = opt
+                ok = True
+        printErr = True
+
+    return foundOpt
+
 
 print('''
 
@@ -26,55 +50,61 @@ print('''
 ''')
 
 
-if input("Do you want to continue? ([yes]/*)").lower() not in ["", "yes", "y"]:
-    print("aborting..")
-    sys.exit(0)
-print("\n\n\n\n\n")
+print("Download dataset")
+if getUserInput("Do you want to continue?") == "yes":
+    
+    ##################################################
+    ### Doanload data
+    ## This step can be omitted for other datasets
+    ##
 
+    import urllib.request
+    import shutil
 
-##################################################
-### Doanload data
-## This step can be omitted for other datasets
-##
+    files = {
+        "HT_SOL1_LYS_010_pos.mzXML": "https://ucloud.univie.ac.at/index.php/s/kKgd5gBlIlsG9Bj/download",
+        "HT_SOL1_SUP_025_pos.mzXML": "https://ucloud.univie.ac.at/index.php/s/42fEfzSUn4OLFDl/download",
+        "HT_SOL2_LYS_014_pos.mzXML": "https://ucloud.univie.ac.at/index.php/s/84gnlkVxYdWnXC8/download",
+        "HT_SOL2_SUP_029_pos.mzXML": "https://ucloud.univie.ac.at/index.php/s/fidRZt5EtJ1y57J/download",
+        "HT_SOL3_LYS_018_pos.mzXML": "https://ucloud.univie.ac.at/index.php/s/O5QoSHBwl97QuV7/download",
+        "HT_SOL3_SUP_033_pos.mzXML": "https://ucloud.univie.ac.at/index.php/s/RPyxKpP0RqEhHpm/download",
+    }
+    refs = {
+        "Backgrounds.tsv": "https://ucloud.univie.ac.at/index.php/s/4IYdl3sdV92l8l3/download",
+        "Peaks.tsv": "https://ucloud.univie.ac.at/index.php/s/UirxEIecOW55zkv/download",
+        "Walls.tsv": "https://ucloud.univie.ac.at/index.php/s/XMMVhdHpsOdVVT9/download",
+    }
+    models = {
+        "PBmodel_MTBLS1358.model.h5": "https://ucloud.univie.ac.at/index.php/s/8J0B6X9HxWx9qQ6/download"
+    }
 
-import urllib.request
-import shutil
-
-files = {
-	"HT_SOL1_LYS_010_pos.mzXML": "https://ucloud.univie.ac.at/index.php/s/kKgd5gBlIlsG9Bj/download",
-	"HT_SOL1_SUP_025_pos.mzXML": "https://ucloud.univie.ac.at/index.php/s/42fEfzSUn4OLFDl/download",
-	"HT_SOL2_LYS_014_pos.mzXML": "https://ucloud.univie.ac.at/index.php/s/84gnlkVxYdWnXC8/download",
-	"HT_SOL2_SUP_029_pos.mzXML": "https://ucloud.univie.ac.at/index.php/s/fidRZt5EtJ1y57J/download",
-	"HT_SOL3_LYS_018_pos.mzXML": "https://ucloud.univie.ac.at/index.php/s/O5QoSHBwl97QuV7/download",
-	"HT_SOL3_SUP_033_pos.mzXML": "https://ucloud.univie.ac.at/index.php/s/RPyxKpP0RqEhHpm/download",
-}
-refs = {
-	"Backgrounds.tsv": "https://ucloud.univie.ac.at/index.php/s/4IYdl3sdV92l8l3/download",
-	"Peaks.tsv": "https://ucloud.univie.ac.at/index.php/s/UirxEIecOW55zkv/download",
-	"Walls.tsv": "https://ucloud.univie.ac.at/index.php/s/XMMVhdHpsOdVVT9/download",
-}
-
-try:
-    shutil.rmtree(os.path.join(".", "MTBLS1358"))
-except:
-    pass
-
-for a in [os.path.join(".","MTBLS1358"), 
-          os.path.join(".","MTBLS1358", "Data"), 
-          os.path.join(".","MTBLS1358", "Reference"),
-          os.path.join(".","MTBLS1358", "Model"), 
-          os.path.join(".","MTBLS1358", "Temp")]:
     try:
-        os.mkdir(a)
+        shutil.rmtree(os.path.join(".", "MTBLS1358"))
     except:
         pass
 
-print("Downloading data files")
-for fileName, url in files.items():
-	urllib.request.urlretrieve(url, os.path.join(".","MTBLS1358", "Data", fileName))
-print("Downloading reference files")
-for fileName, url in refs.items():
-	urllib.request.urlretrieve(url, os.path.join(".","MTBLS1358", "Reference", fileName))
+    for a in [os.path.join(".","MTBLS1358"), 
+              os.path.join(".","MTBLS1358", "Data"), 
+              os.path.join(".","MTBLS1358", "Reference"),
+              os.path.join(".","MTBLS1358", "Model"), 
+              os.path.join(".","MTBLS1358", "Temp")]:
+        try:
+            os.mkdir(a)
+        except:
+            pass
+
+    print("Downloading data files")
+    for fileName, url in files.items():
+        print("  ", os.path.join(".","MTBLS1358", "Data", fileName))
+        urllib.request.urlretrieve(url, os.path.join(".","MTBLS1358", "Data", fileName))
+    print("Downloading reference files")
+    for fileName, url in refs.items():
+        print("  ", os.path.join(".","MTBLS1358", "Reference", fileName))
+        urllib.request.urlretrieve(url, os.path.join(".","MTBLS1358", "Reference", fileName))
+    print("Downloading pre-trained model")
+    for fileName, url in models.items():
+        print("  ", os.path.join(".","MTBLS1358", "Model", fileName))
+        urllib.request.urlretrieve(url, os.path.join(".","MTBLS1358", "Model", fileName))
 print("\n\n\n\n\n")
 
 
@@ -180,36 +210,6 @@ randomnessFactor = 0.1
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-##################################################
-### Train new model
-##
-print("Training instances will be generated and a new PeakBot CNN model will be trained")
-
 # Imports
 import os
 import pickle
@@ -221,13 +221,6 @@ import numpy as np
 import pandas as pd
 import plotnine as p9
 
-
-######################################################################
-###
-### Load and import PeakBot
-##
-#
-
 ## Load the PeakBot package
 import sys
 sys.path.append(os.path.join("..", "peakbot", "src"))
@@ -235,7 +228,6 @@ import peakbot
 import peakbot.train.cuda
 import peakbot.Chromatogram
 from peakbot.core import tic, toc, tocP, TabLog
-
 
 
 ## Function for loading mzXML files (and saving them as pickle file for fast access)
@@ -255,173 +247,215 @@ def loadFile(path):
     return mzxml
 
 
-tic(label="overall")
 
 
 
-###############################################
-### Generate train instances
-##
-## The different training sets are loaded from the files
-## Different references an be loaded for different training and validation datastes
-## Finally, all training and validation datasets are compiled into different sets in the variable dsProps
-##    For each such dataset the chromatograms, reference peaks, backgrounds and walls must be specified as well
-##    as the number of instances to be generated
-headers, peaks       = peakbot.readTSVFile(os.path.join(".", expName, "Reference", "Peaks.tsv"      ), convertToMinIfPossible = True)
-headers, walls       = peakbot.readTSVFile(os.path.join(".", expName, "Reference", "Walls.tsv"      ), convertToMinIfPossible = True)
-headers, backgrounds = peakbot.readTSVFile(os.path.join(".", expName, "Reference", "Backgrounds.tsv"), convertToMinIfPossible = True)
-random.shuffle(peaks)
-a = int(len(peaks)*0.6)
-peaksTrain = peaks[:a]
-peaksVal   = peaks[a:]
-print("Using %d peaks for training and %d peaks for internal validation"%(a, len(peaks)-a))
 
-dsProps = {
-    "T"  : {"files": inFiles , "peaks": peaksTrain, "walls": walls, "backgrounds": backgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*peakbot.Config.EPOCHS/len(inFiles))), "shuffleSteps": 1E4},
-    "V"  : {"files": inFiles , "peaks": peaksVal  , "walls": walls, "backgrounds": backgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(inFiles)))                    , "shuffleSteps": 1E4},
-    "iT" : {"files": exFiles , "peaks": peaksTrain, "walls": walls, "backgrounds": backgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(exFiles)))                    , "shuffleSteps": 1E4},
-    "iV" : {"files": exFiles , "peaks": peaksVal  , "walls": walls, "backgrounds": backgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(exFiles)))                    , "shuffleSteps": 1E4},
-}
 
-###############################################
-### Generate training instances from the previously specified training and validation datasets
-## (no changes are required here)
-runTimes = []
 
-## The random seeds are set
-tf.random.set_seed(2021)
-np.random.seed(2021)
 
-histAll = None
-try:
-    os.remove(os.path.join(".", expName, "Temp", "History_PHM.pandas.pickle"))
-except Exception:
-    pass
 
-with tempfile.TemporaryDirectory() as examplesDir:
-    tic("Generated training and validation instances")
-    for ds in dsProps.keys():
-        print("Processing dataset '%s'"%ds)
-        print("")
 
-        os.mkdir(os.path.join(examplesDir, ds))
+
+
+
+
+
+
+
+
+
+
+
+
+
+print("Do you want to use the available pre-trained model?")
+if getUserInput("Use pre-trained model? (recommended for testing and new users)") == "yes":
+    pass 
+elif getUserInput("Do you want to train a new model") == "yes":
+
+    print("Train new model (saving to '%s', this might take long depending on your computer hardware)"%(expParams["PeakBotModel"]))
+    if input("Do you want to continue? (y[es]/no)").lower() in ["yes", "y"]:
+
+        ##################################################
+        ### Train new model
+        ##
+        print("Training instances will be generated and a new PeakBot CNN model will be trained")
+
+
+        tic(label="overall")
+
+
 
         ###############################################
-        ### Iterate files and polarities (if FPS is used)
+        ### Generate train instances
+        ##
+        ## The different training sets are loaded from the files
+        ## Different references an be loaded for different training and validation datastes
+        ## Finally, all training and validation datasets are compiled into different sets in the variable dsProps
+        ##    For each such dataset the chromatograms, reference peaks, backgrounds and walls must be specified as well
+        ##    as the number of instances to be generated
+        headers, peaks       = peakbot.readTSVFile(os.path.join(".", expName, "Reference", "Peaks.tsv"      ), convertToMinIfPossible = True)
+        headers, walls       = peakbot.readTSVFile(os.path.join(".", expName, "Reference", "Walls.tsv"      ), convertToMinIfPossible = True)
+        headers, backgrounds = peakbot.readTSVFile(os.path.join(".", expName, "Reference", "Backgrounds.tsv"), convertToMinIfPossible = True)
+        random.shuffle(peaks)
+        a = int(len(peaks)*0.6)
+        peaksTrain = peaks[:a]
+        peaksVal   = peaks[a:]
+        print("Using %d peaks for training and %d peaks for internal validation"%(a, len(peaks)-a))
+
+        dsProps = {
+            "T"  : {"files": inFiles , "peaks": peaksTrain, "walls": walls, "backgrounds": backgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*peakbot.Config.EPOCHS/len(inFiles))), "shuffleSteps": 1E4},
+            "V"  : {"files": inFiles , "peaks": peaksVal  , "walls": walls, "backgrounds": backgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(inFiles)))                    , "shuffleSteps": 1E4},
+            "iT" : {"files": exFiles , "peaks": peaksTrain, "walls": walls, "backgrounds": backgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(exFiles)))                    , "shuffleSteps": 1E4},
+            "iV" : {"files": exFiles , "peaks": peaksVal  , "walls": walls, "backgrounds": backgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(exFiles)))                    , "shuffleSteps": 1E4},
+        }
+
+        ###############################################
+        ### Generate training instances from the previously specified training and validation datasets
         ## (no changes are required here)
-        for inFile, fileLoc in dsProps[ds]["files"].items():
-            tic(label="sample")
+        runTimes = []
+
+        ## The random seeds are set
+        tf.random.set_seed(2021)
+        np.random.seed(2021)
+
+        histAll = None
+        try:
+            os.remove(os.path.join(".", expName, "Temp", "History_MTBLS1358.pandas.pickle"))
+        except Exception:
+            pass
+
+        with tempfile.TemporaryDirectory() as examplesDir:
+            tic("Generated training and validation instances")
+            for ds in dsProps.keys():
+                print("Processing dataset '%s'"%ds)
+                print("")
+
+                os.mkdir(os.path.join(examplesDir, ds))
+
+                ###############################################
+                ### Iterate files and polarities (if FPS is used)
+                ## (no changes are required here)
+                for inFile, fileLoc in dsProps[ds]["files"].items():
+                    tic(label="sample")
+
+                    ###############################################
+                    ### Data parameters for chromatograms
+                    polarities = expParams["polarities"]
+                    intraScanMaxAdjacentSignalDifferencePPM = expParams["intraScanMaxAdjacentSignalDifferencePPM"]
+                    interScanMaxSimilarSignalDifferencePPM = expParams["interScanMaxSimilarSignalDifferencePPM"]
+                    RTpeakWidth = expParams["RTpeakWidth"]
+                    minIntensity = expParams["minIntensity"]
+
+                    for polarity, filterLine in polarities.items():
+                        print("Processing chromatogram '%s', sample '%s', polarity '%s'"%(ds, inFile, polarity))
+                        print("")
+
+                        ###############################################
+                        ### Load chromatogram
+                        tic()
+                        mzxml = loadFile(fileLoc)
+                        print("Available filter lines for file '%s': %s"%(inFile, str(mzxml.getFilterLinesPerPolarity())))
+                        mzxml.keepOnlyFilterLine(filterLine)
+                        print("Filtered chromatogram file for %s scan events only"%(polarity))
+                        print("")
+
+                        ###############################################
+                        ### Generate train data
+                        peakbot.train.cuda.generateTestInstances(
+                            mzxml, "'%s':'%s'"%(inFile, filterLine),
+                            dsProps[ds]["peaks"], dsProps[ds]["walls"], dsProps[ds]["backgrounds"],
+
+                            nTestExamples = dsProps[ds]["n"], exportPath = os.path.join(examplesDir, ds),
+
+                            intraScanMaxAdjacentSignalDifferencePPM=intraScanMaxAdjacentSignalDifferencePPM,
+                            interScanMaxSimilarSignalDifferencePPM=interScanMaxSimilarSignalDifferencePPM,
+                            updateToLocalPeakProperties = True,
+
+                            RTpeakWidth = RTpeakWidth, minIntensity = minIntensity,
+
+                            maxPopulation = maxPopulation, intensityScales = intensityScales, randomnessFactor = randomnessFactor,
+
+                            blockdim = blockdim, griddim = griddim,
+                            verbose = True)
+
+                ###############################################
+                ### Shuffle generated training/validation dataset from the different chromatograms
+                peakbot.train.shuffleResultsSampleNames(os.path.join(examplesDir, ds), verbose = True)
+                peakbot.train.shuffleResults(os.path.join(examplesDir, ds), steps = dsProps[ds]["shuffleSteps"], samplesToExchange = 50, verbose = True)
+
+            tocP("Generated training and validation instances", label="Generated training and validation instances")
+            runTimes.append("Generating new training/validation instances for the datasets took %.1f seconds"%(toc("Generated training and validation instances")))
+            print("\n\n\n\n\n")
+
+            
 
             ###############################################
-            ### Data parameters for chromatograms
-            polarities = expParams["polarities"]
-            intraScanMaxAdjacentSignalDifferencePPM = expParams["intraScanMaxAdjacentSignalDifferencePPM"]
-            interScanMaxSimilarSignalDifferencePPM = expParams["interScanMaxSimilarSignalDifferencePPM"]
-            RTpeakWidth = expParams["RTpeakWidth"]
-            minIntensity = expParams["minIntensity"]
+            ### Train new PeakBot Model
+            ## (no changes are required here)
+            tic("train new PeakBot model")
+            pb = None
+            with strategy.scope():
 
-            for polarity, filterLine in polarities.items():
-                print("Processing chromatogram '%s', sample '%s', polarity '%s'"%(ds, inFile, polarity))
+                addValDS = []
+                for ds in dsProps.keys():
+                    addValDS.append({"folder": os.path.join(examplesDir, ds), "name": ds, "numBatches": 512})
+
+                pb, hist = peakbot.trainPeakBotModel(trainInstancesPath = os.path.join(examplesDir, "T"),
+                                                    addValidationInstances = addValDS,
+                                                    logBaseDir = os.path.join(".", expName, "Temp"),
+                                                    verbose = True)
+
+                pb.saveModelToFile(expParams["PeakBotModel"])
+                print("Newly trained peakbot saved to file '%s'"%(expParams["PeakBotModel"]))
+
+
+                if histAll is None:
+                    histAll = hist
+                else:
+                    histAll = histAll.append(hist, ignore_index=True)
+
+                print("")
                 print("")
 
-                ###############################################
-                ### Load chromatogram
-                tic()
-                mzxml = loadFile(fileLoc)
-                print("Available filter lines for file '%s': %s"%(inFile, str(mzxml.getFilterLinesPerPolarity())))
-                mzxml.keepOnlyFilterLine(filterLine)
-                print("Filtered chromatogram file for %s scan events only"%(polarity))
-                print("")
+                ### Summarize the training and validation metrices and losses
+                ## (no changes are required here)
+                histAll.to_pickle(os.path.join(".", expName, "Temp", "History_MTBLS1358.pandas.pickle"))
+                tocP("train new PeakBot model","train new PeakBot model")
+                runTimes.append("Traing a new PeakBot model took %.1f seconds"%toc("train new PeakBot model"))
 
-                ###############################################
-                ### Generate train data
-                peakbot.train.cuda.generateTestInstances(
-                    mzxml, "'%s':'%s'"%(inFile, filterLine),
-                    dsProps[ds]["peaks"], dsProps[ds]["walls"], dsProps[ds]["backgrounds"],
-
-                    nTestExamples = dsProps[ds]["n"], exportPath = os.path.join(examplesDir, ds),
-
-                    intraScanMaxAdjacentSignalDifferencePPM=intraScanMaxAdjacentSignalDifferencePPM,
-                    interScanMaxSimilarSignalDifferencePPM=interScanMaxSimilarSignalDifferencePPM,
-                    updateToLocalPeakProperties = True,
-
-                    RTpeakWidth = RTpeakWidth, minIntensity = minIntensity,
-
-                    maxPopulation = maxPopulation, intensityScales = intensityScales, randomnessFactor = randomnessFactor,
-
-                    blockdim = blockdim, griddim = griddim,
-                    verbose = True)
-
+            
+            
         ###############################################
-        ### Shuffle generated training/validation dataset from the different chromatograms
-        peakbot.train.shuffleResultsSampleNames(os.path.join(examplesDir, ds), verbose = True)
-        peakbot.train.shuffleResults(os.path.join(examplesDir, ds), steps = dsProps[ds]["shuffleSteps"], samplesToExchange = 50, verbose = True)
-
-    tocP("Generated training and validation instances", label="Generated training and validation instances")
-    runTimes.append("Generating new training/validation instances for the datasets took %.1f seconds"%(toc("Generated training and validation instances")))
-    print("\n\n\n\n\n")
-
-    
-
-    ###############################################
-    ### Train new PeakBot Model
-    ## (no changes are required here)
-    tic("train new PeakBot model")
-    pb = None
-    with strategy.scope():
-
-        addValDS = []
-        for ds in dsProps.keys():
-            addValDS.append({"folder": os.path.join(examplesDir, ds), "name": ds, "numBatches": 512})
-
-        pb, hist = peakbot.trainPeakBotModel(trainInstancesPath = os.path.join(examplesDir, "T"),
-                                            addValidationInstances = addValDS,
-                                            logBaseDir = os.path.join(".", expName, "Temp"),
-                                            verbose = True)
-
-        pb.saveModelToFile(expParams["PeakBotModel"])
-        print("Newly trained peakbot saved to file '%s'"%(expParams["PeakBotModel"]))
-
-
-        if histAll is None:
-            histAll = hist
-        else:
-            histAll = histAll.append(hist, ignore_index=True)
-
-        print("")
-        print("")
-
-        ### Summarize the training and validation metrices and losses
+        ### Summarize and illustrate the results of the different training and validation dataset
         ## (no changes are required here)
-        histAll.to_pickle(os.path.join(".", expName, "Temp", "History_PHM.pandas.pickle"))
-        tocP("train new PeakBot model","train new PeakBot model")
-        runTimes.append("Traing a new PeakBot model took %.1f seconds"%toc("train new PeakBot model"))
+        df = pd.read_pickle(os.path.join(".", expName, "Temp", "History_MTBLS1358.pandas.pickle"))
+        df['ID'] = df.model.str.split('_').str[-1]
+        df = df[df["metric"]!="loss"]
+        df = df[df["set"]!="eV"]
+        df.to_csv(os.path.join(".", expName, "Temp", "SummaryPlot_MTBLS1358.tsv"), sep="\t", index=False)
 
-    
-    
-###############################################
-### Summarize and illustrate the results of the different training and validation dataset
-## (no changes are required here)
-df = pd.read_pickle(os.path.join(".", expName, "Temp", "History_PHM.pandas.pickle"))
-df['ID'] = df.model.str.split('_').str[-1]
-df = df[df["metric"]!="loss"]
-df = df[df["set"]!="eV"]
-df.to_csv(os.path.join(".", expName, "Temp", "SummaryPlot_PHM.tsv"), sep="\t", index=False)
-
-plot = (p9.ggplot(df, p9.aes("set", "value", colour="set"))
-        + p9.geom_point()
-        + p9.facet_wrap("~metric", scales="free_y", ncol=2)
-        + p9.scale_x_discrete(limits=["T", "V", "iT", "iV"])
-        + p9.ggtitle("Training losses/metrics") + p9.xlab("Training/Validation dataset") + p9.ylab("Value")
-        + p9.theme(legend_position = "none", panel_spacing_x=0.5))
-p9.options.figure_size = (5.2,5)
-p9.ggsave(plot=plot, filename=os.path.join(".", expName, "Temp", "SummaryPlot_PHM.png"), width=5.2, height=5, dpi=300)
+        plot = (p9.ggplot(df, p9.aes("set", "value", colour="set"))
+                + p9.geom_point()
+                + p9.facet_wrap("~metric", scales="free_y", ncol=2)
+                + p9.scale_x_discrete(limits=["T", "V", "iT", "iV"])
+                + p9.ggtitle("Training losses/metrics") + p9.xlab("Training/Validation dataset") + p9.ylab("Value")
+                + p9.theme(legend_position = "none", panel_spacing_x=0.5))
+        p9.options.figure_size = (5.2,5)
+        p9.ggsave(plot=plot, filename=os.path.join(".", expName, "Temp", "SummaryPlot_MTBLS1358.png"), width=5.2, height=5, dpi=300)
 
 
-## Print runtimes
-for r in runTimes:
-    print(r)
+        ## Print runtimes
+        for r in runTimes:
+            print(r)
 print("\n\n\n\n\n")
+
+
+
+
+
+
 
 
 
@@ -438,9 +472,8 @@ print("\n\n\n\n\n")
 ##################################################
 ### Detect chromatographic peaks
 ##
-print("The recently trained model will be used to detect chromatographic peaks in LC-HRMS chromatograms")
-
-
+print("The trained model (loading from '%s') will be used to detect chromatographic peaks in LC-HRMS chromatograms"%(expParams["PeakBotModel"]))
+TabLog().reset()
 tic(label="overall")
 
 ###############################################
