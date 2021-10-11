@@ -187,12 +187,13 @@ detFiles = {
 ##
 ## These values specify how the GPU is used for generating the training examples
 ## Please consult the documentation of your GPU.
-## Values for an old Nvidia GTX 970 graphics card with 4GB GPU-memory are blockdim = 256, griddim = 64
+## Values for an old Nvidia GTX 970 graphics card with 4GB GPU-memory are blockdim = 256, griddim = 64, exportBatchSize = 1024
+## Values for a high-end HPC Nvidia Tesla V100S card with 32GB GPU-memory are blockdim = 16, griddim = 512, exportBatchSize = 12288
 ## These should thus work for most newer card, however, for maximum performance these should be optimized to the GPU used
 ## The strategy specifies on which device tensorflow shall be executed.
 blockdim = 256
-griddim  = 256
-exportBatchSize = 2048
+griddim  = 64
+exportBatchSize = 1024
 strategy = tf.distribute.OneDeviceStrategy(device="/gpu:0")
 
 ###############################################

@@ -133,38 +133,7 @@ if __name__ == "__main__":
     maxPopulation = 4
     intensityScales = 10
     randomnessFactor = 0.1
-
-    ###############################################
-    ### Generate train instances
-    ##
-    ## The different training sets are loaded from the files
-    ## Different references an be loaded for different training and validation datastes
-    ## Finally, all training and validation datasets are compiled into different sets in the variable dsProps
-    ##    For each such dataset the chromatograms, reference peaks, backgrounds and walls must be specified as well
-    ##    as the number of instances to be generated
-    headers, peaks       = peakbot.readTSVFile("./Reference/MTBLS797_Peaks.tsv"      , convertToMinIfPossible = True)
-    headers, walls       = peakbot.readTSVFile("./Reference/MTBLS797_Walls.tsv"      , convertToMinIfPossible = True)
-    headers, backgrounds = peakbot.readTSVFile("./Reference/MTBLS797_Backgrounds.tsv", convertToMinIfPossible = True)
-    random.shuffle(peaks)
-    a = int(len(peaks)*0.6)
-    peaksTrain = peaks[:a]
-    peaksVal   = peaks[a:]
-    print("Using %d peaks for training and %d peaks for internal validation"%(a, len(peaks)-a))
-
-    dsProps = {
-        "T"  : {"files": inFiles , "peaks": peaksTrain, "walls": walls, "backgrounds": backgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*peakbot.Config.EPOCHS/len(inFiles))), "shuffleSteps": 1E4},
-        "V"  : {"files": inFiles , "peaks": peaksVal  , "walls": walls, "backgrounds": backgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(inFiles)))                    , "shuffleSteps": 1E4},
-        "iT" : {"files": exFiles , "peaks": peaksTrain, "walls": walls, "backgrounds": backgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(exFiles)))                    , "shuffleSteps": 1E4},
-        "iV" : {"files": exFiles , "peaks": peaksVal  , "walls": walls, "backgrounds": backgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(exFiles)))                    , "shuffleSteps": 1E4},
-    }
-
-
-
-
-
-    ###############################################
-    ### Generate training instances from the previously specified training and validation datasets
-    ## (no changes are required here)
+    
     runTimes = []
 
     ## The random seeds are set
@@ -179,6 +148,35 @@ if __name__ == "__main__":
     
     for i in range(5):
         tic("Generated training and validation instances")
+
+        ###############################################
+        ### Generate train instances
+        ##
+        ## The different training sets are loaded from the files
+        ## Different references an be loaded for different training and validation datastes
+        ## Finally, all training and validation datasets are compiled into different sets in the variable dsProps
+        ##    For each such dataset the chromatograms, reference peaks, backgrounds and walls must be specified as well
+        ##    as the number of instances to be generated
+        def rotate(l, n):
+            n = n % len(l)
+            return l[n:] + l[:n]
+        headers, peaks       = peakbot.readTSVFile("./Reference/MTBLS797_Peaks.tsv"      , convertToMinIfPossible = True)
+        headers, walls       = peakbot.readTSVFile("./Reference/MTBLS797_Walls.tsv"      , convertToMinIfPossible = True)
+        headers, backgrounds = peakbot.readTSVFile("./Reference/MTBLS797_Backgrounds.tsv", convertToMinIfPossible = True)
+        print("rotating training data by", int(i * len(peaks)/5), "of", len(peaks))
+        peaks = rotate(peaks, int(i * len(peaks)/5))
+        a = int(len(peaks)*0.6)
+        peaksTrain = peaks[:a]
+        peaksVal   = peaks[a:]
+        print("Using %d peaks for training and %d peaks for internal validation"%(a, len(peaks)-a))
+
+        dsProps = {
+            "T"  : {"files": inFiles , "peaks": peaksTrain, "walls": walls, "backgrounds": backgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*peakbot.Config.EPOCHS/len(inFiles))), "shuffleSteps": 1E4},
+            "V"  : {"files": inFiles , "peaks": peaksVal  , "walls": walls, "backgrounds": backgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(inFiles)))                    , "shuffleSteps": 1E4},
+            "iT" : {"files": exFiles , "peaks": peaksTrain, "walls": walls, "backgrounds": backgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(exFiles)))                    , "shuffleSteps": 1E4},
+            "iV" : {"files": exFiles , "peaks": peaksVal  , "walls": walls, "backgrounds": backgrounds, "n": max(2**14,math.ceil(peakbot.Config.BATCHSIZE*peakbot.Config.STEPSPEREPOCH*8/len(exFiles)))                    , "shuffleSteps": 1E4},
+        }
+
         for ds in dsProps.keys():
             print("Processing dataset '%s'"%ds)
             print("")
