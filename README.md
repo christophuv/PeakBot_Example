@@ -76,3 +76,6 @@ This script shows how detected chromatographic peaks can be grouped into a data 
 The main functions to group detected features from several samples are `peakbot.cuda.KNNalignFeatures` for aligning the detected features using a k-nearest-neighbor approach and `peakbot.cuda.groupFeatures` for calculating the groups. 
 
 More information about how to specify the files and the LC-HRMS properties is directly documented in the script. 
+
+## Data folder
+The data is not hosted in this github repository but on metabolights or other repositories. Please view the file READMEData.md for further information.
