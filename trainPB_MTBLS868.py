@@ -3,6 +3,14 @@
 
 ## run in python >= 3.8
 
+import argparse
+
+parser = argparse.ArgumentParser(description='Train a new PeakBot Model ')
+parser.add_argument('--replicates', action='store',
+                    default=1, nargs='?', type=int, 
+                    help='Number of replicate trainings. Used for estimating performance of repeated training. Default 1')
+args = parser.parse_args()
+
 
 # Imports
 import os
@@ -144,7 +152,7 @@ if __name__ == "__main__":
     except Exception:
         pass
     
-    for i in range(5):
+    for i in range(args.replicates):
         tic("Generated training and validation instances")
 
         ###############################################
@@ -285,17 +293,17 @@ if __name__ == "__main__":
     ## (no changes are required here)
     df = pd.read_pickle(os.path.join(".", "Data", "History_MTBLS868.pandas.pickle"))
     df['ID'] = df.model.str.split('_').str[-1]
-    df = df[df["metric"]!="loss"]
+    df = df[df["metric"].isin(["box_iou", "center_loss", "peakType_PeakNopeakAccuracy", "peakType_categorical_accuracy"])]
     df.to_csv(os.path.join(".", "Data", "SummaryPlot_MTBLS868.tsv"), sep="\t", index=False)
 
     plot = (p9.ggplot(df, p9.aes("set", "value", colour="set"))
-            + p9.geom_point()
+            + p9.geom_jitter(height=0)
             + p9.facet_wrap("~metric", scales="free_y", ncol=2)
             + p9.scale_x_discrete(limits=["T", "V", "iT", "iV"])
-            + p9.ggtitle("Training losses/metrics") + p9.xlab("Training/Validation dataset") + p9.ylab("Value")
+            + p9.ggtitle("MTBLS868: Training losses/metrics") + p9.xlab("Training/Validation dataset") + p9.ylab("Value")
             + p9.theme(legend_position = "none", panel_spacing_x=0.5))
     p9.options.figure_size = (5.2,5)
-    p9.ggsave(plot=plot, filename=os.path.join(".", "Data", "SummaryPlot_MTBLS868.png"), width=5.2, height=5, dpi=300)
+    p9.ggsave(plot=plot, filename=os.path.join(".", "Data", "SummaryPlot_MTBLS868.png"), width=5.2, height=3, dpi=300)
 
 
     ## Print runtimes
